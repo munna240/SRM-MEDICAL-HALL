@@ -356,20 +356,20 @@
                     <p>This prescription has not been edited or deleted yet.</p>
                 </div>
 
-            {% endfor %}
-
-            {% if prescription.is_deleted %}
-                <a href="{% url 'prescription_history' prescription.prescription_id %}"
-                   class="btn">
-                    Refresh History
-                </a>
-            {% else %}
-                <a href="{% url 'prescription_detail' prescription.prescription_id %}"
-                   class="btn">
-                    ← Back to Prescription
-                </a>
-            {% endif %}
-
+           
+{% if prescription.is_deleted %}
+    {% if request.user.is_superuser or request.user.profile.role == 'ADMIN' or request.user.profile.role == 'STAFF' %}
+        <a href="{% url 'deleted_prescription_list' %}" class="btn">
+            ← Back to Deleted Prescriptions
+        </a>
+    {% endif %}
+{% else %}
+    <a href="{% url 'prescription_detail' prescription.prescription_id %}"
+       class="btn">
+        ← Back to Prescription
+    </a>
+{% endif %}
+            
         </div>
     </div>
 

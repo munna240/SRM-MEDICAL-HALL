@@ -1,9 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Restore Prescription | SRM MEDICAL HALL</title>
 
     <style>
@@ -39,6 +39,7 @@
             border-radius: 8px;
             margin: 20px 0;
             line-height: 1.8;
+            overflow-wrap: anywhere;
         }
 
         label {
@@ -55,6 +56,11 @@
             border-radius: 7px;
             font-size: 15px;
             resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #15803d;
         }
 
         button, .cancel {
@@ -74,6 +80,10 @@
             color: white;
         }
 
+        button:hover {
+            background: #166534;
+        }
+
         .cancel {
             background: #e2e8f0;
             color: #334155;
@@ -87,6 +97,19 @@
             border-radius: 7px;
             line-height: 1.6;
         }
+
+        @media(max-width: 600px) {
+            .container {
+                padding: 22px;
+            }
+
+            button, .cancel {
+                display: block;
+                width: 100%;
+                text-align: center;
+                margin-left: 0;
+            }
+        }
     </style>
 </head>
 
@@ -99,9 +122,11 @@
     <p class="warning">
         You are about to restore this deleted prescription.
         It will become visible again in the active Prescription Directory.
+        Previous Version History will remain preserved.
     </p>
 
     <div class="info">
+
         <strong>Prescription ID:</strong>
         {{ prescription.prescription_id }}<br>
 
@@ -113,12 +138,16 @@
 
         <strong>Status:</strong>
         {{ prescription.get_status_display }}
+
     </div>
 
-    <form method="POST">
+    <form method="POST" id="restoreForm">
+
         {% csrf_token %}
 
-        <label for="reason">Reason for Restoration *</label>
+        <label for="reason">
+            Reason for Restoration *
+        </label>
 
         <textarea
             id="reason"
@@ -131,13 +160,38 @@
             Confirm Restore
         </button>
 
-        <a href="{% url 'prescription_history' prescription.prescription_id %}"
-           class="cancel">
+        <a
+            href="{% url 'prescription_history' prescription.prescription_id %}"
+            class="cancel"
+        >
             Cancel
         </a>
+
     </form>
 
 </div>
+
+<script>
+document.getElementById('restoreForm').addEventListener('submit', function(event) {
+
+    const reason = document.getElementById('reason').value.trim();
+
+    if (!reason) {
+        event.preventDefault();
+        alert('Please provide a reason for restoration.');
+        return;
+    }
+
+    const confirmed = confirm(
+        'Are you sure you want to restore this prescription?'
+    );
+
+    if (!confirmed) {
+        event.preventDefault();
+    }
+
+});
+</script>
 
 </body>
 </html>

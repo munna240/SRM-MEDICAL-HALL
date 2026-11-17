@@ -364,6 +364,7 @@ def create_prescription_snapshot(prescription):
 
 
 # =====================================
+# =====================================
 # EDIT PRESCRIPTION
 # =====================================
 
@@ -379,17 +380,28 @@ def prescription_edit(request, prescription_id):
         is_deleted=False
     )
 
+    # Permission Check
     if not can_manage_prescription(request.user, prescription):
-        messages.error(request, 'You are not authorized to edit this prescription.')
+        messages.error(
+            request,
+            'You are not authorized to edit this prescription.'
+        )
         return redirect('prescription_list')
 
     if request.method == 'POST':
 
         reason = request.POST.get('reason', '').strip()
 
+        # Finalized prescription requires reason
         if prescription.status == 'FINALIZED' and not reason:
-            messages.error(request, 'Please provide a reason for editing this finalized prescription.')
-            return redirect('prescription_edit', prescription_id=prescription_id)
+            messages.error(
+                request,
+                'Please provide a reason for editing this finalized prescription.'
+            )
+            return redirect(
+                'prescription_edit',
+                prescription_id=prescription_id
+            )
 
         medicine_names = request.POST.getlist('medicine_name[]')
         dosages = request.POST.getlist('dosage[]')
@@ -397,49 +409,96 @@ def prescription_edit(request, prescription_id):
         durations = request.POST.getlist('duration[]')
         instructions = request.POST.getlist('instructions[]')
 
-        with transaction.atomic():
+        # Validate medicine entries
+        valid_medicines = [
+            i for i, name in enumerate(medicine_names)
+            if name.strip()
+        ]
 
-            old_snapshot = create_prescription_snapshot(prescription)
-
-            PrescriptionVersion.objects.create(
-                prescription=prescription,
-                prescription_id_snapshot=prescription.prescription_id,
-                action='EDIT',
-                snapshot={
-                    'reason': reason,
-                    'previous_data': old_snapshot,
-                },
-                changed_by=request.user
+        if not valid_medicines:
+            messages.error(
+                request,
+                'At least one medicine is required.'
+            )
+            return redirect(
+                'prescription_edit',
+                prescription_id=prescription_id
             )
 
-            prescription.diagnosis = request.POST.get('diagnosis', '').strip()
-            prescription.chief_complaints = request.POST.get('chief_complaints', '').strip()
-            prescription.on_examination = request.POST.get('on_examination', '').strip()
-            prescription.advice = request.POST.get('advice', '').strip()
+        try:
 
-            prescription.save()
+            with transaction.atomic():
 
-            prescription.medicines.all().delete()
+                # Preserve previous prescription data
+                old_snapshot = create_prescription_snapshot(
+                    prescription
+                )
 
-            for i, name in enumerate(medicine_names):
+                # Save version history
+                PrescriptionVersion.objects.create(
+                    prescription=prescription,
+                    prescription_id_snapshot=prescription.prescription_id,
+                    action='EDIT',
+                    snapshot={
+                        'reason': reason,
+                        'previous_data': old_snapshot,
+                    },
+                    changed_by=request.user
+                )
 
-                if name.strip():
+                # Update clinical information
+                prescription.diagnosis = request.POST.get(
+                    'diagnosis', ''
+                ).strip()
+
+                prescription.chief_complaints = request.POST.get(
+                    'chief_complaints', ''
+                ).strip()
+
+                prescription.on_examination = request.POST.get(
+                    'on_examination', ''
+                ).strip()
+
+                prescription.advice = request.POST.get(
+                    'advice', ''
+                ).strip()
+
+                prescription.save()
+
+                # Replace medicines
+                prescription.medicines.all().delete()
+
+                for i in valid_medicines:
 
                     PrescriptionMedicine.objects.create(
                         prescription=prescription,
-                        medicine_name=name.strip(),
+                        medicine_name=medicine_names[i].strip(),
                         dosage=dosages[i].strip() if i < len(dosages) else '',
                         frequency=frequencies[i].strip() if i < len(frequencies) else '',
                         duration=durations[i].strip() if i < len(durations) else '',
                         instructions=instructions[i].strip() if i < len(instructions) else ''
                     )
 
-        messages.success(request, 'Prescription updated and previous version saved.')
+            messages.success(
+                request,
+                'Prescription updated successfully. Previous version saved in history.'
+            )
 
-        return redirect(
-            'prescription_detail',
-            prescription_id=prescription.prescription_id
-        )
+            return redirect(
+                'prescription_detail',
+                prescription_id=prescription.prescription_id
+            )
+
+        except Exception:
+            messages.error(
+                request,
+                'Something went wrong. Prescription was not updated.'
+            )
+
+            return redirect(
+                'prescription_edit',
+                prescription_id=prescription_id
+            )
 
     return render(
         request,
@@ -447,7 +506,7 @@ def prescription_edit(request, prescription_id):
         {'prescription': prescription}
     )
 
-
+# =====================================
 # =====================================
 # DELETE PRESCRIPTION (SOFT DELETE)
 # =====================================
@@ -457,100 +516,95 @@ def prescription_edit(request, prescription_id):
 def prescription_delete(request, prescription_id):
 
     prescription = get_object_or_404(
-        Prescription,
+        Prescription.objects.select_related(
+            'patient', 'doctor'
+        ),
         prescription_id=prescription_id,
         is_deleted=False
     )
 
+    # Permission Check
     if not can_manage_prescription(request.user, prescription):
-        messages.error(request, 'You are not authorized to delete this prescription.')
+        messages.error(
+            request,
+            'You are not authorized to delete this prescription.'
+        )
         return redirect('prescription_list')
 
     if request.method == 'POST':
 
         reason = request.POST.get('reason', '').strip()
 
+        # Finalized prescription requires deletion reason
         if prescription.status == 'FINALIZED' and not reason:
-            messages.error(request, 'Please provide a reason for deleting this finalized prescription.')
+            messages.error(
+                request,
+                'Please provide a reason for deleting this finalized prescription.'
+            )
             return redirect(
-                'prescription_detail',
+                'prescription_delete',
                 prescription_id=prescription.prescription_id
             )
 
-        with transaction.atomic():
+        try:
 
-            snapshot = create_prescription_snapshot(prescription)
+            with transaction.atomic():
 
-            PrescriptionVersion.objects.create(
-                prescription=prescription,
-                prescription_id_snapshot=prescription.prescription_id,
-                action='DELETE',
-                snapshot={
-                    'reason': reason,
-                    'previous_data': snapshot,
-                },
-                changed_by=request.user
+                # Lock prescription during deletion
+                prescription = get_object_or_404(
+                    Prescription.objects.select_for_update(),
+                    prescription_id=prescription_id,
+                    is_deleted=False
+                )
+
+                # Preserve previous data
+                snapshot = create_prescription_snapshot(
+                    prescription
+                )
+
+                # Save deletion history
+                PrescriptionVersion.objects.create(
+                    prescription=prescription,
+                    prescription_id_snapshot=prescription.prescription_id,
+                    action='DELETE',
+                    snapshot={
+                        'reason': reason,
+                        'previous_data': snapshot,
+                    },
+                    changed_by=request.user
+                )
+
+                # Soft Delete
+                prescription.is_deleted = True
+                prescription.deleted_at = timezone.now()
+                prescription.save(
+                    update_fields=['is_deleted', 'deleted_at']
+                )
+
+            messages.success(
+                request,
+                'Prescription deleted safely. Previous information has been preserved in Version History.'
             )
 
-            prescription.is_deleted = True
-            prescription.deleted_at = timezone.now()
-            prescription.save()
+            return redirect('prescription_list')
 
-        messages.success(request, 'Prescription deleted safely. History has been preserved.')
+        except Exception:
+            messages.error(
+                request,
+                'Something went wrong. Prescription was not deleted.'
+            )
 
-        return redirect('prescription_list')
+            return redirect(
+                'prescription_detail',
+                prescription_id=prescription_id
+            )
 
     return render(
         request,
         'core/prescription_delete.html',
         {'prescription': prescription}
     )
-
-
 # =====================================
-# PRESCRIPTION VERSION HISTORY
-# =====================================
-
-@login_required
-@role_required('ADMIN', 'STAFF', 'DOCTOR')
-def prescription_history(request, prescription_id):
-
-    prescription = get_object_or_404(
-        Prescription.objects.select_related(
-            'patient',
-            'doctor'
-        ),
-        prescription_id=prescription_id
-    )
-
-    # Doctor can only view history of own prescriptions
-    if not request.user.is_superuser:
-
-        if request.user.profile.role == 'DOCTOR':
-
-            if prescription.doctor_id != request.user.id:
-
-                messages.error(
-                    request,
-                    'You are not authorized to view this history.'
-                )
-
-                return redirect('doctor_patients')
-
-    versions = PrescriptionVersion.objects.filter(
-        prescription_id_snapshot=prescription_id
-    ).select_related(
-        'changed_by'
-    ).order_by('-changed_at')
-
-    return render(
-        request,
-        'core/prescription_history.html',
-        {
-            'prescription': prescription,
-            'versions': versions
-        }
-    )
 # =====================================
 # RESTORE DELETED PRESCRIPTION
 # =====================================
@@ -560,7 +614,10 @@ def prescription_history(request, prescription_id):
 def prescription_restore(request, prescription_id):
 
     prescription = get_object_or_404(
-        Prescription,
+        Prescription.objects.select_related(
+            'patient',
+            'doctor'
+        ),
         prescription_id=prescription_id,
         is_deleted=True
     )
@@ -579,36 +636,79 @@ def prescription_restore(request, prescription_id):
                 prescription_id=prescription_id
             )
 
-        with transaction.atomic():
+        try:
 
-            PrescriptionVersion.objects.create(
-                prescription=prescription,
-                prescription_id_snapshot=prescription.prescription_id,
-                action='RESTORE',
-                snapshot={
-                    'previous_data': create_prescription_snapshot(
-                        prescription
-                    ),
-                    'reason': reason,
-                },
-                changed_by=request.user
+            with transaction.atomic():
+
+                # Lock prescription to prevent duplicate restoration
+                locked_prescription = (
+                    Prescription.objects.select_for_update()
+                    .select_related('patient', 'doctor')
+                    .filter(
+                        prescription_id=prescription_id,
+                        is_deleted=True
+                    )
+                    .first()
+                )
+
+                if not locked_prescription:
+
+                    messages.warning(
+                        request,
+                        'This prescription has already been restored.'
+                    )
+
+                    return redirect('deleted_prescription_list')
+
+                # Preserve previous data
+                previous_snapshot = create_prescription_snapshot(
+                    locked_prescription
+                )
+
+                # Save restoration history
+                PrescriptionVersion.objects.create(
+                    prescription=locked_prescription,
+                    prescription_id_snapshot=locked_prescription.prescription_id,
+                    action='RESTORE',
+                    snapshot={
+                        'reason': reason,
+                        'previous_data': previous_snapshot,
+                    },
+                    changed_by=request.user
+                )
+
+                # Restore prescription
+                locked_prescription.is_deleted = False
+                locked_prescription.deleted_at = None
+
+                locked_prescription.save(
+                    update_fields=[
+                        'is_deleted',
+                        'deleted_at',
+                        'updated_at'
+                    ]
+                )
+
+            messages.success(
+                request,
+                'Prescription successfully restored. Restoration history has been saved.'
             )
 
-            prescription.is_deleted = False
-            prescription.deleted_at = None
-            prescription.save(
-                update_fields=['is_deleted', 'deleted_at', 'updated_at']
+            return redirect(
+                'prescription_detail',
+                prescription_id=prescription_id
             )
 
-        messages.success(
-            request,
-            'Prescription successfully restored.'
-        )
+        except Exception:
+            messages.error(
+                request,
+                'Something went wrong. Prescription was not restored.'
+            )
 
-        return redirect(
-            'prescription_detail',
-            prescription_id=prescription_id
-        )
+            return redirect(
+                'prescription_restore',
+                prescription_id=prescription_id
+            )
 
     return render(
         request,
@@ -670,5 +770,50 @@ def verify_prescription(request, token):
         {
             'verified': True,
             'prescription': prescription
+        }
+    )
+# =====================================
+# PRESCRIPTION VERSION HISTORY
+# =====================================
+
+@login_required
+@role_required('ADMIN', 'STAFF', 'DOCTOR')
+def prescription_history(request, prescription_id):
+
+    prescription = get_object_or_404(
+        Prescription.objects.select_related(
+            'patient',
+            'doctor'
+        ),
+        prescription_id=prescription_id
+    )
+
+    # Doctor can only view their own prescription history
+    if not request.user.is_superuser:
+
+        if request.user.profile.role == 'DOCTOR':
+
+            if prescription.doctor_id != request.user.id:
+
+                messages.error(
+                    request,
+                    'You are not authorized to view this prescription history.'
+                )
+
+                return redirect('doctor_patients')
+
+    # Get all previous versions
+    versions = PrescriptionVersion.objects.filter(
+        prescription_id_snapshot=prescription.prescription_id
+    ).select_related(
+        'changed_by'
+    ).order_by('-changed_at')
+
+    return render(
+        request,
+        'core/prescription_history.html',
+        {
+            'prescription': prescription,
+            'versions': versions,
         }
     )

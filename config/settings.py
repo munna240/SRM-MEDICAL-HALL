@@ -1,9 +1,24 @@
 
 import os
+import cloudinary
+
 from pathlib import Path
 from urllib.parse import urlparse, unquote
+from dotenv import load_dotenv
+
+
+# =====================================================
+# BASE DIRECTORY & ENVIRONMENT
+# =====================================================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(BASE_DIR / ".env")
+
+
+# =====================================================
+# SECURITY SETTINGS
+# =====================================================
 
 SECRET_KEY = os.environ.get(
     "SECRET_KEY",
@@ -28,6 +43,11 @@ CSRF_TRUSTED_ORIGINS = [
     if origin.strip()
 ]
 
+
+# =====================================================
+# INSTALLED APPS
+# =====================================================
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -35,11 +55,18 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
     "cloudinary_storage",
     "cloudinary",
+
     "core",
     "accounts",
 ]
+
+
+# =====================================================
+# MIDDLEWARE
+# =====================================================
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -52,7 +79,17 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+
+# =====================================================
+# URL CONFIGURATION
+# =====================================================
+
 ROOT_URLCONF = "config.urls"
+
+
+# =====================================================
+# TEMPLATES
+# =====================================================
 
 TEMPLATES = [
     {
@@ -70,7 +107,13 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = "config.wsgi.application"
+
+
+# =====================================================
+# DATABASE CONFIGURATION
+# =====================================================
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
@@ -90,6 +133,7 @@ if DATABASE_URL:
             },
         }
     }
+
 else:
     DATABASES = {
         "default": {
@@ -97,6 +141,11 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
+
+
+# =====================================================
+# PASSWORD VALIDATION
+# =====================================================
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -113,15 +162,33 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+# =====================================================
+# LANGUAGE & TIME
+# =====================================================
+
 LANGUAGE_CODE = "en-us"
+
 TIME_ZONE = "Asia/Dhaka"
+
 USE_I18N = True
+
 USE_TZ = True
 
+
+# =====================================================
+# STATIC FILES
+# =====================================================
+
 STATIC_URL = "/static/"
+
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Cloudinary credentials from environment variables
+
+# =====================================================
+# CLOUDINARY CONFIGURATION
+# =====================================================
+
 CLOUDINARY_STORAGE = {
     "CLOUD_NAME": os.environ.get("CLOUDINARY_CLOUD_NAME"),
     "API_KEY": os.environ.get("CLOUDINARY_API_KEY"),
@@ -129,7 +196,18 @@ CLOUDINARY_STORAGE = {
     "SECURE": True,
 }
 
-# Permanent cloud storage for uploaded media
+cloudinary.config(
+    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.environ.get("CLOUDINARY_API_KEY"),
+    api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
+    secure=True,
+)
+
+
+# =====================================================
+# MEDIA & STORAGE CONFIGURATION
+# =====================================================
+
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
@@ -139,14 +217,30 @@ STORAGES = {
     },
 }
 
-
 MEDIA_URL = "/media/"
+
 MEDIA_ROOT = BASE_DIR / "media"
+
+
+# =====================================================
+# EMAIL CONFIGURATION
+# =====================================================
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
+
+# =====================================================
+# DEFAULT PRIMARY KEY
+# =====================================================
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+
+# =====================================================
+# SITE URL
+# =====================================================
+
 SITE_URL = os.environ.get(
-    "SITE_URL", "http://127.0.0.1:8000"
+    "SITE_URL",
+    "http://127.0.0.1:8000"
 ).rstrip("/")
