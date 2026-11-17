@@ -220,12 +220,13 @@ def patient_edit(request, patient_id):
 
 
 # =========================
-# PRESCRIPTION DETAILS
-# =========================
+# 
 
 @login_required
 @role_required('ADMIN', 'STAFF', 'DOCTOR')
 def prescription_detail(request, prescription_id):
+
+    from .models import PharmacySettings
 
     prescription = get_object_or_404(
         Prescription.objects.select_related(
@@ -262,12 +263,20 @@ def prescription_detail(request, prescription_id):
             qr_image.read()
         ).decode('utf-8')
 
+    # Get pharmacy branding
+    pharmacy = PharmacySettings.objects.first()
+
+    print("PHARMACY:", pharmacy)
+    print("LOGO FIELD:", pharmacy.logo if pharmacy else "NO PHARMACY")
+    print("LOGO URL:", pharmacy.logo.url if pharmacy and pharmacy.logo else "NO LOGO")
+
     return render(
         request,
         'core/prescription_detail.html',
         {
             'prescription': prescription,
             'qr_code_data': qr_code_data,
+            'pharmacy': pharmacy,
         }
     )
 

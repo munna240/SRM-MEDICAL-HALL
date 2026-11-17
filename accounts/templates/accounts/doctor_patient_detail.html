@@ -84,12 +84,14 @@
             font-weight: bold;
         }
 
-        .profile-card {
+        .profile-card,
+        .section {
             background: white;
             padding: 28px;
             border-radius: 13px;
             box-shadow: 0 3px 15px rgba(0,0,0,0.04);
             margin-bottom: 25px;
+            border: 1px solid #edf0f4;
         }
 
         .profile-heading {
@@ -110,15 +112,6 @@
             color: #087e8b;
             font-weight: bold;
             font-size: 13px;
-        }
-
-        .section {
-            background: white;
-            padding: 25px;
-            border-radius: 13px;
-            box-shadow: 0 3px 15px rgba(0,0,0,0.04);
-            margin-bottom: 22px;
-            border: 1px solid #edf0f4;
         }
 
         .section h2 {
@@ -185,21 +178,78 @@
             line-height: 1.5;
         }
 
-        .create-btn {
+        .create-btn,
+        .view-btn {
             display: inline-block;
             background: #087e8b;
             color: white;
-            padding: 13px 22px;
+            padding: 11px 17px;
             border-radius: 7px;
             text-decoration: none;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 13px;
             transition: 0.2s;
         }
 
-        .create-btn:hover {
+        .create-btn:hover,
+        .view-btn:hover {
             background: #065f68;
-            transform: translateY(-1px);
+        }
+
+        .prescription-list {
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+        }
+
+        .prescription-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 9px;
+            padding: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .prescription-item h3 {
+            font-size: 15px;
+            color: #142b45;
+            margin-bottom: 8px;
+        }
+
+        .prescription-item p {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .draft {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .finalized {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 15px;
+            color: #64748b;
+            background: #f8fafc;
+            border-radius: 8px;
+            font-size: 14px;
         }
 
         .back-link {
@@ -244,7 +294,6 @@
 <body>
 
 <aside class="sidebar">
-
     <div class="brand">
         SRM MEDICAL HALL
         <span>DOCTOR PORTAL</span>
@@ -253,10 +302,9 @@
     <nav class="menu">
         <a href="{% url 'dashboard' %}">Dashboard</a>
         <a href="{% url 'doctor_patients' %}" class="active">My Patients</a>
-        <a href="#">Digital Prescriptions</a>
+        <a href="{% url 'prescription_list' %}">Digital Prescriptions</a>
         <a href="{% url 'doctor_profile' %}">My Profile</a>
     </nav>
-
 </aside>
 
 <main class="main">
@@ -279,7 +327,6 @@
             <h2>Personal Information</h2>
 
             <div class="info-grid">
-
                 <div class="info-item">
                     <label>Full Name</label>
                     <p>{{ patient.full_name }}</p>
@@ -302,16 +349,13 @@
 
                 <div class="info-item">
                     <label>Blood Group</label>
-                    <p>
-                        <span class="blood">{{ patient.blood_group }}</span>
-                    </p>
+                    <p><span class="blood">{{ patient.blood_group }}</span></p>
                 </div>
 
                 <div class="info-item">
                     <label>Address</label>
                     <p>{{ patient.address|default:"Not provided" }}</p>
                 </div>
-
             </div>
         </section>
 
@@ -319,7 +363,6 @@
             <h2>Medical Information</h2>
 
             <div class="info-grid">
-
                 <div class="info-item">
                     <label>Known Allergies</label>
                     <p>{{ patient.allergies|default:"No allergies recorded" }}</p>
@@ -329,7 +372,6 @@
                     <label>Medical History</label>
                     <p>{{ patient.medical_history|default:"No medical history recorded" }}</p>
                 </div>
-
             </div>
         </section>
 
@@ -337,7 +379,6 @@
             <h2>Registration Information</h2>
 
             <div class="info-grid">
-
                 <div class="info-item">
                     <label>Patient ID</label>
                     <p>{{ patient.patient_id }}</p>
@@ -352,30 +393,75 @@
                     <label>Last Updated</label>
                     <p>{{ patient.updated_at|date:"d M Y, h:i A" }}</p>
                 </div>
-
             </div>
         </section>
 
-        <!-- CREATE PRESCRIPTION -->
-
         <div class="prescription-action">
-
             <div>
                 <h3>Digital Prescription</h3>
-                <p>
-                    Create and save a digital prescription for this patient.
-                    The prescription will be stored in the system.
-                </p>
+                <p>Create and save a digital prescription for this patient.</p>
             </div>
 
             <a href="{% url 'doctor_create_prescription' patient.patient_id %}"
                class="create-btn">
                 + Create New Prescription
             </a>
-
         </div>
 
     </div>
+
+    <!-- PRESCRIPTION HISTORY -->
+
+    <section class="section">
+        <h2>Prescription History ({{ prescriptions|length }})</h2>
+
+        {% if prescriptions %}
+            <div class="prescription-list">
+
+                {% for prescription in prescriptions %}
+                    <div class="prescription-item">
+
+                        <div>
+                            <h3>{{ prescription.prescription_id }}</h3>
+
+                            <p>
+                                Date:
+                                {{ prescription.created_at|date:"d M Y, h:i A" }}
+                            </p>
+
+                            <p>
+                                Diagnosis:
+                                {{ prescription.diagnosis|default:"Not provided"|truncatechars:100 }}
+                            </p>
+
+                            <p>
+                                Medicines: {{ prescription.medicines.count }}
+                            </p>
+
+                            {% if prescription.status == 'FINALIZED' %}
+                                <span class="status finalized">FINALIZED</span>
+                            {% else %}
+                                <span class="status draft">DRAFT</span>
+                            {% endif %}
+                        </div>
+
+                        <a href="{% url 'prescription_detail' prescription.prescription_id %}"
+                           class="view-btn">
+                            View Prescription
+                        </a>
+
+                    </div>
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+            <div class="empty-state">
+                No prescription has been created for this patient yet.
+            </div>
+        {% endif %}
+
+    </section>
 
     <a href="{% url 'doctor_patients' %}" class="back-link">
         ← Back to My Patients

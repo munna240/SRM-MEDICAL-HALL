@@ -587,47 +587,40 @@
 
             <header class="header">
 
-                <div class="pharmacy-brand">
+    {% if pharmacy and pharmacy.logo %}
+        <img
+            src="{{ pharmacy.logo.url }}"
+            alt="SRM MEDICAL HALL Logo"
+            class="pharmacy-logo"
+            loading="eager"
+        >
+    {% endif %}
 
-                    {% if pharmacy and pharmacy.logo %}
-                        <img
-                            src="{{ pharmacy.logo.url }}"
-                            alt="{{ pharmacy.pharmacy_name }} Logo"
-                            class="pharmacy-logo"
-                        >
-                    {% endif %}
+    <h1>
+        {% if pharmacy %}
+            {{ pharmacy.pharmacy_name }}
+        {% else %}
+            SRM MEDICAL HALL
+        {% endif %}
+    </h1>
 
-                    <div class="pharmacy-brand-text">
+    <p>SMART PHARMACY MANAGEMENT SYSTEM</p>
 
-                        <h1>
-                            {% if pharmacy %}
-                                {{ pharmacy.pharmacy_name }}
-                            {% else %}
-                                SRM MEDICAL HALL
-                            {% endif %}
-                        </h1>
+    {% if pharmacy and pharmacy.address %}
+        <p>{{ pharmacy.address }}</p>
+    {% endif %}
 
-                        <p>Pharmacy Management System</p>
+    {% if pharmacy and pharmacy.phone %}
+        <p>Phone: {{ pharmacy.phone }}</p>
+    {% endif %}
 
-                    </div>
+    {% if pharmacy and pharmacy.email %}
+        <p>Email: {{ pharmacy.email }}</p>
+    {% endif %}
 
-                </div>
+    <p>Digital Doctor Prescription</p>
 
-                {% if pharmacy and pharmacy.address %}
-                    <p>{{ pharmacy.address }}</p>
-                {% endif %}
-
-                {% if pharmacy and pharmacy.phone %}
-                    <p>Phone: {{ pharmacy.phone }}</p>
-                {% endif %}
-
-                {% if pharmacy and pharmacy.email %}
-                    <p>Email: {{ pharmacy.email }}</p>
-                {% endif %}
-
-                <p>Digital Doctor Prescription</p>
-
-            </header>
+</header>
 
             <!-- TITLE AND STATUS -->
 

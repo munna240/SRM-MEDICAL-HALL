@@ -1,15 +1,24 @@
-from core.models import Patient, Prescription, PrescriptionMedicine
+
+import uuid
+
+from django.db import models
+from django.contrib.auth.models import User
 from django.utils import timezone
-from .decorators import role_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.contrib.auth.models import User
 
+from core.models import (
+    Patient,
+    Prescription,
+    PrescriptionMedicine,
+    PharmacySettings
+)
+
+from .decorators import role_required
 from .forms import StaffRegistrationForm, DoctorRegistrationForm
 from .models import UserProfile
-from django.shortcuts import render, redirect, get_object_or_404
 
 
 # =========================
@@ -78,12 +87,22 @@ def login_view(request):
                 'Invalid username or password.'
             )
 
-    return render(request, 'accounts/login.html')
+    # Pharmacy Settings থেকে Logo ও Name নেওয়া
+    pharmacy = PharmacySettings.objects.first()
+
+    return render(
+        request,
+        'accounts/login.html',
+        {
+            'pharmacy': pharmacy
+        }
+    )
 
 
 # =========================
 # DASHBOARD
 # =========================
+
 @login_required
 @role_required('ADMIN', 'STAFF', 'DOCTOR')
 def dashboard_view(request):
@@ -121,7 +140,9 @@ def dashboard_view(request):
 # =========================
 
 def logout_view(request):
+
     logout(request)
+
     return redirect('login')
 
 
@@ -226,6 +247,7 @@ def doctor_register(request):
         }
     )
 
+
 # =========================
 # DOCTOR PROFILE
 # =========================
@@ -255,8 +277,14 @@ def doctor_profile_edit(request):
 
     if request.method == 'POST':
 
-        request.user.first_name = request.POST.get('first_name', '').strip()
-        request.user.last_name = request.POST.get('last_name', '').strip()
+        request.user.first_name = request.POST.get(
+            'first_name', ''
+        ).strip()
+
+        request.user.last_name = request.POST.get(
+            'last_name', ''
+        ).strip()
+
         request.user.save()
 
         profile.phone = request.POST.get('phone', '').strip()
@@ -273,7 +301,10 @@ def doctor_profile_edit(request):
 
         profile.save()
 
-        messages.success(request, 'Your profile has been updated successfully.')
+        messages.success(
+            request,
+            'Your profile has been updated successfully.'
+        )
 
         return redirect('doctor_profile')
 
@@ -282,6 +313,8 @@ def doctor_profile_edit(request):
         'accounts/doctor_profile_edit.html',
         {'profile': profile}
     )
+
+
 # =========================
 # DOCTOR MY PATIENTS
 # =========================
@@ -302,6 +335,8 @@ def doctor_patients(request):
             'patients': patients
         }
     )
+
+
 # =========================
 # DOCTOR PATIENT DETAILS
 # =========================
@@ -317,17 +352,27 @@ def doctor_patient_detail(request, patient_id):
         is_active=True
     )
 
+    prescriptions = Prescription.objects.filter(
+        patient=patient,
+        doctor=request.user,
+        is_deleted=False
+    ).prefetch_related(
+        'medicines'
+    ).order_by('-created_at')
+
     return render(
         request,
         'accounts/doctor_patient_detail.html',
         {
-            'patient': patient
+            'patient': patient,
+            'prescriptions': prescriptions
         }
     )
+
+
 # =========================
 # DOCTOR CREATE PRESCRIPTION
 # =========================
-
 
 @login_required
 @role_required('DOCTOR')
@@ -345,7 +390,11 @@ def doctor_create_prescription(request, patient_id):
         action = request.POST.get('action', 'draft')
 
         if action not in ['draft', 'finalize']:
-            messages.error(request, 'Invalid prescription action.')
+            messages.error(
+                request,
+                'Invalid prescription action.'
+            )
+
             return redirect(
                 'doctor_patient_detail',
                 patient_id=patient.patient_id
@@ -387,6 +436,7 @@ def doctor_create_prescription(request, patient_id):
                 request,
                 'Prescription finalized successfully!'
             )
+
         else:
             messages.success(
                 request,
@@ -404,6 +454,7 @@ def doctor_create_prescription(request, patient_id):
         {'patient': patient}
     )
 
+
 # =====================================
 # DOCTOR CREATES PRESCRIPTION FOR NEW PATIENT
 # =====================================
@@ -417,15 +468,29 @@ def doctor_new_patient_prescription(request):
         action = request.POST.get('action', 'draft')
 
         if action not in ['draft', 'finalize']:
-            messages.error(request, 'Invalid prescription action.')
+
+            messages.error(
+                request,
+                'Invalid prescription action.'
+            )
+
             return redirect('doctor_new_patient_prescription')
 
         full_name = request.POST.get('full_name', '').strip()
         phone = request.POST.get('phone', '').strip()
         gender = request.POST.get('gender', '').strip()
 
-        if not full_name or not phone or gender not in ['MALE', 'FEMALE', 'OTHER']:
-            messages.error(request, 'Please provide valid patient information.')
+        if not full_name or not phone or gender not in [
+            'MALE',
+            'FEMALE',
+            'OTHER'
+        ]:
+
+            messages.error(
+                request,
+                'Please provide valid patient information.'
+            )
+
             return redirect('doctor_new_patient_prescription')
 
         patient = Patient.objects.create(
@@ -460,7 +525,9 @@ def doctor_new_patient_prescription(request):
         instructions = request.POST.getlist('instructions[]')
 
         for i in range(len(medicine_names)):
+
             if medicine_names[i].strip():
+
                 PrescriptionMedicine.objects.create(
                     prescription=prescription,
                     medicine_name=medicine_names[i].strip(),
@@ -470,7 +537,10 @@ def doctor_new_patient_prescription(request):
                     instructions=instructions[i].strip() if i < len(instructions) else ''
                 )
 
-        messages.success(request, 'New patient and prescription created successfully!')
+        messages.success(
+            request,
+            'New patient and prescription created successfully!'
+        )
 
         return redirect(
             'doctor_patient_detail',
