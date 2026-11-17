@@ -1,0 +1,556 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Profile | SRM MEDICAL HALL</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f3f6f9;
+            color: #263b39;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #073b36;
+            color: white;
+            padding: 28px 20px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .brand {
+            text-align: center;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #315b55;
+        }
+
+        .brand h2 {
+            font-size: 20px;
+            letter-spacing: 1px;
+        }
+
+        .brand p {
+            font-size: 10px;
+            color: #b7d4cd;
+            margin-top: 7px;
+        }
+
+        .menu {
+            margin-top: 35px;
+        }
+
+        .menu a {
+            display: block;
+            text-decoration: none;
+            color: #d6e7e2;
+            padding: 14px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .menu a.active,
+        .menu a:hover {
+            background: #087c69;
+            color: white;
+        }
+
+        /* MAIN CONTENT */
+
+        .main {
+            margin-left: 250px;
+            padding: 35px;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 22px 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.03);
+        }
+
+        .topbar h2 {
+            color: #073b36;
+            font-size: 23px;
+        }
+
+        .role {
+            background: #e3f4ef;
+            color: #087c69;
+            padding: 9px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .page-heading {
+            margin: 30px 0 20px;
+        }
+
+        .page-heading h1 {
+            color: #073b36;
+            font-size: 25px;
+        }
+
+        .page-heading p {
+            color: #7b8988;
+            margin-top: 8px;
+            font-size: 14px;
+        }
+
+        /* PROFILE CARD */
+
+        .profile-card {
+            background: white;
+            border-radius: 13px;
+            padding: 30px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.035);
+            border: 1px solid #e9eeef;
+        }
+
+        .profile-top {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #e8edf3;
+            margin-bottom: 25px;
+        }
+
+        .avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #e5edf5;
+            border: 4px solid #e8f3f5;
+        }
+
+        .placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: #087f8c;
+        }
+
+        .profile-top h2 {
+            font-size: 23px;
+            margin-bottom: 9px;
+            color: #073b36;
+        }
+
+        .specialty {
+            color: #087f8c;
+            font-size: 14px;
+        }
+
+        .section-title {
+            font-size: 17px;
+            margin-bottom: 18px;
+            color: #073b36;
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .field {
+            padding: 16px;
+            background: #f7f9fc;
+            border-radius: 8px;
+            min-width: 0;
+        }
+
+        .field label {
+            display: block;
+            font-size: 12px;
+            color: #758397;
+            margin-bottom: 8px;
+        }
+
+        .field p {
+            font-size: 15px;
+            font-weight: 600;
+            overflow-wrap: anywhere;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        /* SIGNATURE */
+
+        .signature-box {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f7f9fc;
+            border-radius: 8px;
+        }
+
+        .signature-box img {
+            max-width: 220px;
+            max-height: 90px;
+            object-fit: contain;
+            margin-top: 12px;
+            display: block;
+        }
+
+        /* BUTTONS */
+
+        .bottom {
+            margin-top: 28px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #087c69;
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 7px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            background: #065c50;
+        }
+
+        .back {
+            background: #e8edf3;
+            color: #263445;
+        }
+
+        .back:hover {
+            background: #d8e0e9;
+        }
+
+        .logout {
+            margin-top: 35px;
+            display: inline-block;
+            background: #b93838;
+            color: white;
+            padding: 13px 25px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .logout:hover {
+            background: #922b2b;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 768px) {
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 18px;
+            }
+
+            .topbar {
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+
+            .details {
+                grid-template-columns: 1fr;
+            }
+
+            .full {
+                grid-column: auto;
+            }
+
+            .profile-card {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .profile-top {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .bottom {
+                flex-direction: column;
+            }
+
+            .btn {
+                text-align: center;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <h2>SRM MEDICAL HALL</h2>
+            <p>PHARMACY MANAGEMENT SYSTEM</p>
+        </div>
+
+        <nav class="menu">
+
+            <a href="{% url 'dashboard' %}">
+                Dashboard
+            </a>
+
+            <a href="#">
+                My Patients
+            </a>
+
+            <a href="#">
+                Digital Prescriptions
+            </a>
+
+            <a href="{% url 'doctor_profile' %}" class="active">
+                My Profile
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main">
+
+        <div class="topbar">
+
+            <h2>Doctor Profile</h2>
+
+            <div class="role">
+                DOCTOR PORTAL
+            </div>
+
+        </div>
+
+
+        <div class="page-heading">
+
+            <h1>My Professional Profile</h1>
+
+            <p>
+                View and manage your professional information and credentials.
+            </p>
+
+        </div>
+
+
+        <div class="profile-card">
+
+            <!-- PROFILE HEADER -->
+
+            <div class="profile-top">
+
+                {% if profile.profile_picture %}
+
+                    <img
+                        src="{{ profile.profile_picture.url }}"
+                        class="avatar"
+                        alt="Doctor Profile Picture"
+                    >
+
+                {% else %}
+
+                    <div class="avatar placeholder">
+                        👨‍⚕️
+                    </div>
+
+                {% endif %}
+
+
+                <div>
+
+                    <h2>
+                        Dr. {{ request.user.get_full_name|default:request.user.username }}
+                    </h2>
+
+                    <p class="specialty">
+                        {{ profile.specialization|default:"Specialization not added" }}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- PROFESSIONAL INFORMATION -->
+
+            <h3 class="section-title">
+                Professional Information
+            </h3>
+
+            <div class="details">
+
+                <div class="field">
+
+                    <label>Full Name</label>
+
+                    <p>
+                        {{ request.user.get_full_name|default:"Not provided" }}
+                    </p>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>Qualification</label>
+
+                    <p>
+                        {{ profile.qualification|default:"Not provided" }}
+                    </p>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>Specialization</label>
+
+                    <p>
+                        {{ profile.specialization|default:"Not provided" }}
+                    </p>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>BMDC Registration Number</label>
+
+                    <p>
+                        {{ profile.bmdc_number|default:"Not provided" }}
+                    </p>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>Phone Number</label>
+
+                    <p>
+                        {{ profile.phone|default:"Not provided" }}
+                    </p>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>Email Address</label>
+
+                    <p>
+                        {{ request.user.email|default:"Not provided" }}
+                    </p>
+
+                </div>
+
+
+                <div class="field full">
+
+                    <label>Address</label>
+
+                    <p>
+                        {{ profile.address|default:"Not provided" }}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- SIGNATURE -->
+
+            <div class="signature-box">
+
+                <h3 class="section-title">
+                    Doctor's Signature
+                </h3>
+
+                {% if profile.signature %}
+
+                    <img
+                        src="{{ profile.signature.url }}"
+                        alt="Doctor Signature"
+                    >
+
+                {% else %}
+
+                    <p>Signature not uploaded yet.</p>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- ACTION BUTTONS -->
+
+            <div class="bottom">
+
+                <a href="{% url 'doctor_profile_edit' %}" class="btn">
+                    Edit My Profile
+                </a>
+
+                <a href="{% url 'dashboard' %}" class="btn back">
+                    Back to Dashboard
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <a href="{% url 'logout' %}" class="logout">
+            Sign Out
+        </a>
+
+    </main>
+
+</body>
+</html>

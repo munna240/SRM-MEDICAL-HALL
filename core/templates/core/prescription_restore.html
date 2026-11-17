@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restore Prescription | SRM MEDICAL HALL</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 15px;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,.08);
+        }
+
+        h2 {
+            color: #166534;
+            margin-top: 0;
+        }
+
+        .info {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            line-height: 1.8;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 110px;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font-size: 15px;
+            resize: vertical;
+        }
+
+        button, .cancel {
+            display: inline-block;
+            padding: 12px 20px;
+            border: 0;
+            border-radius: 7px;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+            margin-top: 18px;
+        }
+
+        button {
+            background: #15803d;
+            color: white;
+        }
+
+        .cancel {
+            background: #e2e8f0;
+            color: #334155;
+            margin-left: 8px;
+        }
+
+        .warning {
+            color: #92400e;
+            background: #fef3c7;
+            padding: 13px;
+            border-radius: 7px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Restore Deleted Prescription</h2>
+
+    <p class="warning">
+        You are about to restore this deleted prescription.
+        It will become visible again in the active Prescription Directory.
+    </p>
+
+    <div class="info">
+        <strong>Prescription ID:</strong>
+        {{ prescription.prescription_id }}<br>
+
+        <strong>Patient:</strong>
+        {{ prescription.patient.full_name }}<br>
+
+        <strong>Doctor:</strong>
+        {{ prescription.doctor.get_full_name|default:prescription.doctor.username }}<br>
+
+        <strong>Status:</strong>
+        {{ prescription.get_status_display }}
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label for="reason">Reason for Restoration *</label>
+
+        <textarea
+            id="reason"
+            name="reason"
+            placeholder="Explain why this prescription is being restored..."
+            required
+        ></textarea>
+
+        <button type="submit">
+            Confirm Restore
+        </button>
+
+        <a href="{% url 'prescription_history' prescription.prescription_id %}"
+           class="cancel">
+            Cancel
+        </a>
+    </form>
+
+</div>
+
+</body>
+</html>

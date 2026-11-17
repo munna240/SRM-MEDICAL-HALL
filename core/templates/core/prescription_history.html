@@ -1,0 +1,377 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescription History | SRM MEDICAL HALL</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #102b46;
+            color: white;
+            padding: 25px 18px;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            font-size: 20px;
+            margin: 0 0 8px;
+        }
+
+        .sidebar p {
+            color: #bdcddd;
+            font-size: 12px;
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #dce7f1;
+            text-decoration: none;
+            padding: 13px 14px;
+            margin-bottom: 6px;
+            border-radius: 7px;
+            font-size: 14px;
+        }
+
+        .sidebar a:hover {
+            background: #1769aa;
+        }
+
+        .main {
+            margin-left: 250px;
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        .header {
+            border-bottom: 2px solid #0f766e;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            color: #0f766e;
+            font-size: 25px;
+            margin: 0 0 10px;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 13px;
+            margin: 5px 0;
+        }
+
+        .history-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 9px;
+            padding: 20px;
+            margin-bottom: 18px;
+            background: #f8fafc;
+        }
+
+        .history-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .history-top h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .edit { color: #1d4ed8; font-weight: bold; }
+        .delete { color: #dc2626; font-weight: bold; }
+        .restore { color: #15803d; font-weight: bold; }
+
+        .history-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .history-info label {
+            display: block;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .history-info p {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        .snapshot {
+            margin-top: 18px;
+            padding: 15px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 7px;
+        }
+
+        .snapshot h4 {
+            color: #0f766e;
+            margin: 0 0 12px;
+        }
+
+        .snapshot p {
+            font-size: 13px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .medicine-item {
+            padding: 10px;
+            margin: 8px 0;
+            background: #f1f5f9;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 45px 15px;
+            color: #94a3b8;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 11px 18px;
+            background: #e2e8f0;
+            color: #334155;
+            text-decoration: none;
+            border-radius: 7px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        @media(max-width: 700px) {
+            .sidebar {
+                width: 190px;
+            }
+
+            .main {
+                margin-left: 190px;
+                padding: 15px 10px;
+            }
+
+            .container {
+                padding: 20px 14px;
+            }
+
+            .history-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <h2>SRM MEDICAL HALL</h2>
+        <p>Pharmacy Management System</p>
+
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+        <a href="{% url 'prescription_list' %}">Prescriptions</a>
+
+        {% if request.user.is_superuser or request.user.profile.role == 'ADMIN' or request.user.profile.role == 'STAFF' %}
+            <a href="{% url 'deleted_prescription_list' %}">
+                Deleted Prescriptions
+            </a>
+        {% endif %}
+
+        <a href="{% url 'patient_list' %}">Patients</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    </aside>
+
+    <div class="main">
+        <div class="container">
+
+            <header class="header">
+                <h1>Prescription Version History</h1>
+
+                <p>
+                    Prescription ID:
+                    <strong>{{ prescription.prescription_id }}</strong>
+                </p>
+
+                <p>
+                    Patient:
+                    {{ prescription.patient.full_name }}
+                </p>
+
+                <p>
+                    Doctor:
+                    Dr. {{ prescription.doctor.get_full_name|default:prescription.doctor.username }}
+                </p>
+            </header>
+
+            {% for version in versions %}
+
+                <div class="history-card">
+
+                    <div class="history-top">
+                        <h3>
+                            {% if version.action == 'EDIT' %}
+                                <span class="edit">Prescription Edited</span>
+                            {% elif version.action == 'DELETE' %}
+                                <span class="delete">Prescription Deleted</span>
+                            {% elif version.action == 'RESTORE' %}
+                                <span class="restore">Prescription Restored</span>
+                            {% endif %}
+                        </h3>
+
+                        <strong>
+                            {{ version.changed_at|date:"d M Y, h:i A" }}
+                        </strong>
+                    </div>
+
+                    <div class="history-info">
+
+                        <div>
+                            <label>Changed By</label>
+                            <p>
+                                {% if version.changed_by %}
+                                    {{ version.changed_by.get_full_name|default:version.changed_by.username }}
+                                {% else %}
+                                    Unknown User
+                                {% endif %}
+                            </p>
+                        </div>
+
+                        <div>
+                            <label>Action</label>
+                            <p>{{ version.get_action_display }}</p>
+                        </div>
+
+                        <div>
+                            <label>Prescription ID</label>
+                            <p>{{ version.prescription_id_snapshot }}</p>
+                        </div>
+
+                    </div>
+
+                    <div class="snapshot">
+
+                        <h4>Reason for Change</h4>
+
+                        <p>{{ version.snapshot.reason|default:"No reason provided." }}</p>
+
+                        <h4>Previous Prescription Data</h4>
+
+                        <p>
+                            Patient:
+                            {{ version.snapshot.previous_data.patient.full_name|default:"Not available" }}
+                        </p>
+
+                        <p>
+                            Diagnosis:
+                            {{ version.snapshot.previous_data.diagnosis|default:"Not provided" }}
+                        </p>
+
+                        <p>
+                            Chief Complaints:
+                            {{ version.snapshot.previous_data.chief_complaints|default:"Not provided" }}
+                        </p>
+
+                        <p>
+                            On Examination:
+                            {{ version.snapshot.previous_data.on_examination|default:"Not provided" }}
+                        </p>
+
+                        <p>
+                            Advice:
+                            {{ version.snapshot.previous_data.advice|default:"Not provided" }}
+                        </p>
+
+                        <p>
+                            Status:
+                            {{ version.snapshot.previous_data.status|default:"Not available" }}
+                        </p>
+
+                        <h4>Previous Medicines</h4>
+
+                        {% for medicine in version.snapshot.previous_data.medicines %}
+
+                            <div class="medicine-item">
+                                <strong>{{ medicine.medicine_name }}</strong><br>
+                                Dosage: {{ medicine.dosage }}<br>
+                                Frequency: {{ medicine.frequency }}<br>
+                                Duration: {{ medicine.duration }}<br>
+                                Instructions: {{ medicine.instructions|default:"-" }}
+                            </div>
+
+                        {% empty %}
+                            <p>No previous medicines recorded.</p>
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            {% empty %}
+
+                <div class="empty">
+                    <h3>No Version History Found</h3>
+                    <p>This prescription has not been edited or deleted yet.</p>
+                </div>
+
+            {% endfor %}
+
+            {% if prescription.is_deleted %}
+                <a href="{% url 'prescription_history' prescription.prescription_id %}"
+                   class="btn">
+                    Refresh History
+                </a>
+            {% else %}
+                <a href="{% url 'prescription_detail' prescription.prescription_id %}"
+                   class="btn">
+                    ← Back to Prescription
+                </a>
+            {% endif %}
+
+        </div>
+    </div>
+
+</body>
+</html>

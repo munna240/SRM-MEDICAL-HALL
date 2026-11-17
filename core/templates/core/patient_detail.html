@@ -1,0 +1,425 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Details | SRM MEDICAL HALL</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f3f6f9;
+            color: #263b39;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            background: #073b36;
+            color: white;
+            padding: 28px 20px;
+        }
+
+        .brand {
+            text-align: center;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #315b55;
+        }
+
+        .brand h2 {
+            font-size: 20px;
+        }
+
+        .brand p {
+            font-size: 10px;
+            color: #b7d4cd;
+            margin-top: 7px;
+        }
+
+        .menu {
+            margin-top: 35px;
+        }
+
+        .menu a {
+            display: block;
+            text-decoration: none;
+            color: #d6e7e2;
+            padding: 14px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background: #087c69;
+            color: white;
+        }
+
+        .main {
+            margin-left: 250px;
+            padding: 35px;
+        }
+
+        .topbar {
+            background: white;
+            padding: 22px 25px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .topbar h1 {
+            color: #073b36;
+            font-size: 23px;
+        }
+
+        .role {
+            background: #e3f4ef;
+            color: #087c69;
+            padding: 9px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .intro {
+            margin: 30px 0 22px;
+        }
+
+        .intro h2 {
+            font-size: 21px;
+            margin-bottom: 8px;
+        }
+
+        .intro p {
+            color: #7b8988;
+            font-size: 14px;
+        }
+
+        .profile-card {
+            background: white;
+            padding: 28px;
+            border-radius: 12px;
+            margin-bottom: 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.035);
+        }
+
+        .profile-card h2 {
+            color: #073b36;
+            margin-bottom: 9px;
+        }
+
+        .patient-id {
+            color: #087c69;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .edit-btn {
+            background: #087c69;
+            color: white;
+            text-decoration: none;
+            padding: 12px 19px;
+            border-radius: 7px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .edit-btn:hover {
+            background: #065c50;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .detail-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.035);
+        }
+
+        .detail-card h3 {
+            color: #087c69;
+            font-size: 16px;
+            padding-bottom: 16px;
+            margin-bottom: 18px;
+            border-bottom: 1px solid #edf0f4;
+        }
+
+        .field {
+            margin-bottom: 19px;
+        }
+
+        .field:last-child {
+            margin-bottom: 0;
+        }
+
+        .field label {
+            display: block;
+            color: #899492;
+            font-size: 11px;
+            text-transform: uppercase;
+            margin-bottom: 7px;
+        }
+
+        .field p {
+            color: #334155;
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        .blood {
+            display: inline-block;
+            background: #fff1f2;
+            color: #be123c;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .empty-value {
+            color: #9ca3af !important;
+            font-style: italic;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            text-decoration: none;
+            color: #087c69;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        @media(max-width: 768px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 18px;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<aside class="sidebar">
+
+    <div class="brand">
+        <h2>SRM MEDICAL HALL</h2>
+        <p>PHARMACY MANAGEMENT SYSTEM</p>
+    </div>
+
+    <nav class="menu">
+
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+
+        <a href="{% url 'patient_list' %}" class="active">
+            Patients
+        </a>
+
+        <a href="{% url 'patient_register' %}">
+            Register Patient
+        </a>
+
+    </nav>
+
+</aside>
+
+
+<main class="main">
+
+    <div class="topbar">
+        <h1>Patient Details</h1>
+        <span class="role">PATIENT PROFILE</span>
+    </div>
+
+
+    <div class="intro">
+        <h2>Patient Information</h2>
+        <p>View complete patient profile and medical information.</p>
+    </div>
+
+
+    <section class="profile-card">
+
+        <div>
+            <h2>{{ patient.full_name }}</h2>
+
+            <p class="patient-id">
+                PATIENT ID: {{ patient.patient_id }}
+            </p>
+        </div>
+
+        <a href="{% url 'patient_edit' patient.patient_id %}"
+           class="edit-btn">
+            Edit Patient
+        </a>
+
+    </section>
+
+
+    <section class="details-grid">
+
+        <div class="detail-card">
+
+            <h3>Personal Information</h3>
+
+            <div class="field">
+                <label>Full Name</label>
+                <p>{{ patient.full_name }}</p>
+            </div>
+
+            <div class="field">
+                <label>Phone Number</label>
+                <p>{{ patient.phone }}</p>
+            </div>
+
+            <div class="field">
+                <label>Date of Birth</label>
+                <p>
+                    {% if patient.date_of_birth %}
+                        {{ patient.date_of_birth|date:"d M Y" }}
+                    {% else %}
+                        Not Provided
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="field">
+                <label>Gender</label>
+                <p>{{ patient.get_gender_display }}</p>
+            </div>
+
+            <div class="field">
+                <label>Blood Group</label>
+                <p><span class="blood">{{ patient.blood_group }}</span></p>
+            </div>
+
+            <div class="field">
+                <label>Address</label>
+                <p>
+                    {% if patient.address %}
+                        {{ patient.address|linebreaksbr }}
+                    {% else %}
+                        <span class="empty-value">Not Provided</span>
+                    {% endif %}
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="detail-card">
+
+            <h3>Medical Information</h3>
+
+            <div class="field">
+                <label>Known Allergies</label>
+                <p>
+                    {% if patient.allergies %}
+                        {{ patient.allergies|linebreaksbr }}
+                    {% else %}
+                        <span class="empty-value">No Information Available</span>
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="field">
+                <label>Medical History</label>
+                <p>
+                    {% if patient.medical_history %}
+                        {{ patient.medical_history|linebreaksbr }}
+                    {% else %}
+                        <span class="empty-value">No Information Available</span>
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="field">
+                <label>Assigned Doctor</label>
+                <p>
+                    {% if patient.assigned_doctor %}
+                        Dr. {{ patient.assigned_doctor.get_full_name|default:patient.assigned_doctor.username }}
+                    {% else %}
+                        Not Assigned
+                    {% endif %}
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="detail-card">
+
+            <h3>Registration Information</h3>
+
+            <div class="field">
+                <label>Patient ID</label>
+                <p>{{ patient.patient_id }}</p>
+            </div>
+
+            <div class="field">
+                <label>Registration Date</label>
+                <p>{{ patient.created_at|date:"d M Y, h:i A" }}</p>
+            </div>
+
+            <div class="field">
+                <label>Last Updated</label>
+                <p>{{ patient.updated_at|date:"d M Y, h:i A" }}</p>
+            </div>
+
+            <div class="field">
+                <label>Registered By</label>
+                <p>
+                    {% if patient.created_by %}
+                        {{ patient.created_by.get_full_name|default:patient.created_by.username }}
+                    {% else %}
+                        Not Available
+                    {% endif %}
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <a href="{% url 'patient_list' %}" class="back-link">
+        ← Back to Patient Directory
+    </a>
+
+</main>
+
+</body>
+</html>

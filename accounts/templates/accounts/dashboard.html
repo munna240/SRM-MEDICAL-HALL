@@ -1,0 +1,391 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ role }} Dashboard | SRM MEDICAL HALL</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f3f6f9;
+            color: #263b39;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #073b36;
+            color: white;
+            padding: 28px 20px;
+            overflow-y: auto;
+        }
+
+        .brand {
+            text-align: center;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #315b55;
+        }
+
+        .brand h2 {
+            font-size: 20px;
+            letter-spacing: 1px;
+        }
+
+        .brand p {
+            font-size: 10px;
+            color: #b7d4cd;
+            margin-top: 7px;
+        }
+
+        .menu {
+            margin-top: 35px;
+        }
+
+        .menu a {
+            display: block;
+            text-decoration: none;
+            color: #d6e7e2;
+            padding: 14px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .menu a.active,
+        .menu a:hover {
+            background: #087c69;
+            color: white;
+        }
+
+        .main {
+            margin-left: 250px;
+            padding: 35px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 22px 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.03);
+        }
+
+        .role {
+            background: #e3f4ef;
+            color: #087c69;
+            padding: 9px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .welcome {
+            margin-top: 30px;
+            padding: 30px;
+            background: linear-gradient(120deg, #087c69, #073b36);
+            color: white;
+            border-radius: 14px;
+        }
+
+        .welcome h1 {
+            font-size: 27px;
+            margin-bottom: 12px;
+        }
+
+        .welcome p {
+            color: #d3e9e3;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .section-title {
+            margin: 35px 0 20px;
+            color: #073b36;
+            font-size: 20px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #e9eeef;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.025);
+            height: 100%;
+            transition: 0.2s;
+        }
+
+        .card h3 {
+            color: #087c69;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            color: #7b8988;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .logout {
+            margin-top: 35px;
+            display: inline-block;
+            background: #b93838;
+            color: white;
+            padding: 13px 25px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .logout:hover {
+            background: #922b2b;
+        }
+
+        .card-link {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            transition: 0.2s;
+        }
+
+        .card-link:hover .card {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 22px rgba(0,0,0,0.07);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 18px;
+            }
+
+            .topbar {
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <h2>SRM MEDICAL HALL</h2>
+            <p>PHARMACY MANAGEMENT SYSTEM</p>
+        </div>
+
+        <nav class="menu">
+
+            <a href="{% url 'dashboard' %}" class="active">Dashboard</a>
+
+            {% if role == 'ADMIN' %}
+
+                <a href="{% url 'patient_list' %}">Patients</a>
+                <a href="{% url 'prescription_list' %}">Prescriptions</a>
+                <a href="#">Medicine Inventory</a>
+                <a href="#">Sales & Billing</a>
+                <a href="#">Purchases & Suppliers</a>
+                <a href="#">Reports & Analytics</a>
+                <a href="/admin/accounts/userprofile/">Registration Approvals</a>
+                <a href="#">Settings</a>
+
+            {% elif role == 'STAFF' %}
+
+                <a href="{% url 'patient_list' %}">Patients</a>
+                <a href="{% url 'prescription_list' %}">Prescriptions</a>
+                <a href="#">Medicine Inventory</a>
+                <a href="#">Sales & Billing</a>
+                <a href="#">Purchases & Suppliers</a>
+
+            {% elif role == 'DOCTOR' %}
+
+                <a href="{% url 'doctor_patients' %}">My Patients</a>
+                <a href="{% url 'prescription_list' %}">Digital Prescriptions</a>
+                <a href="{% url 'doctor_profile' %}">My Profile</a>
+
+            {% endif %}
+
+        </nav>
+
+    </aside>
+
+    <main class="main">
+
+        <div class="topbar">
+            <div class="role">{{ role }} PORTAL</div>
+        </div>
+
+        <section class="welcome">
+
+            {% if role == 'ADMIN' %}
+
+                <h1>Welcome, Administrator</h1>
+                <p>
+                    Manage the complete SRM MEDICAL HALL
+                    Pharmacy Management System, including staff,
+                    doctors, inventory, sales and financial reports.
+                </p>
+
+            {% elif role == 'STAFF' %}
+
+                <h1>Welcome, Pharmacy Staff</h1>
+                <p>
+                    Manage patient information, medicine inventory,
+                    pharmacy sales, billing and daily operations
+                    according to your assigned permissions.
+                </p>
+
+            {% elif role == 'DOCTOR' %}
+
+                <h1>Welcome, Doctor</h1>
+                <p>
+                    Manage your patients, review patient information
+                    and create digital prescriptions.
+                    Your portal is restricted to clinical activities.
+                </p>
+
+            {% endif %}
+
+        </section>
+
+        <h2 class="section-title">Your Management Modules</h2>
+
+        <section class="cards">
+
+            {% if role == 'ADMIN' %}
+
+                <a href="{% url 'patient_list' %}" class="card-link">
+                    <div class="card">
+                        <h3>Patient Management</h3>
+                        <p>Manage patient profiles and medical records.</p>
+                    </div>
+                </a>
+
+                <a href="{% url 'prescription_list' %}" class="card-link">
+                    <div class="card">
+                        <h3>Digital Prescriptions</h3>
+                        <p>Review and manage all digital prescriptions.</p>
+                    </div>
+                </a>
+
+                <div class="card">
+                    <h3>Medicine Inventory</h3>
+                    <p>Manage medicine stock, batches and expiry.</p>
+                </div>
+
+                <div class="card">
+                    <h3>Sales & Billing</h3>
+                    <p>Manage pharmacy sales, payments and invoices.</p>
+                </div>
+
+                <div class="card">
+                    <h3>Purchases & Suppliers</h3>
+                    <p>Manage medicine purchases and suppliers.</p>
+                </div>
+
+                <div class="card">
+                    <h3>Reports & Analytics</h3>
+                    <p>Monitor pharmacy performance and financial reports.</p>
+                </div>
+
+                <div class="card">
+                    <h3>Registration Approvals</h3>
+                    <p>Approve or reject Staff and Doctor applications.</p>
+                </div>
+
+                <div class="card">
+                    <h3>System Settings</h3>
+                    <p>Manage pharmacy information and system settings.</p>
+                </div>
+
+            {% elif role == 'STAFF' %}
+
+                <a href="{% url 'patient_list' %}" class="card-link">
+                    <div class="card">
+                        <h3>Patient Management</h3>
+                        <p>Register patients and manage patient information.</p>
+                    </div>
+                </a>
+
+                <a href="{% url 'prescription_list' %}" class="card-link">
+                    <div class="card">
+                        <h3>Prescriptions</h3>
+                        <p>View prescriptions and process authorized dispensing.</p>
+                    </div>
+                </a>
+
+                <div class="card">
+                    <h3>Medicine Inventory</h3>
+                    <p>Manage medicine stock, batches and expiry dates.</p>
+                </div>
+
+                <div class="card">
+                    <h3>Sales & Billing</h3>
+                    <p>Process medicine sales, payments and invoices.</p>
+                </div>
+
+                <div class="card">
+                    <h3>Purchases & Suppliers</h3>
+                    <p>Manage authorized purchase and supplier operations.</p>
+                </div>
+
+            {% elif role == 'DOCTOR' %}
+
+                <a href="{% url 'doctor_patients' %}" class="card-link">
+                    <div class="card">
+                        <h3>My Patients</h3>
+                        <p>Access authorized patient information and medical history.</p>
+                    </div>
+                </a>
+
+                <a href="{% url 'prescription_list' %}" class="card-link">
+                    <div class="card">
+                        <h3>Digital Prescriptions</h3>
+                        <p>View your prescriptions and create new prescriptions.</p>
+                    </div>
+                </a>
+
+                <a href="{% url 'doctor_profile' %}" class="card-link">
+                    <div class="card">
+                        <h3>My Profile</h3>
+                        <p>View and update your professional information and credentials.</p>
+                    </div>
+                </a>
+
+            {% endif %}
+
+        </section>
+
+        <a href="{% url 'logout' %}" class="logout">Sign Out</a>
+
+    </main>
+
+</body>
+</html>

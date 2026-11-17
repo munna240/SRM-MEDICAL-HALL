@@ -1,0 +1,762 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescription Details | SRM MEDICAL HALL</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #102b46;
+            color: white;
+            padding: 25px 18px;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            font-size: 20px;
+            margin: 0 0 8px;
+        }
+
+        .sidebar p {
+            color: #bdcddd;
+            font-size: 12px;
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #dce7f1;
+            text-decoration: none;
+            padding: 13px 14px;
+            margin-bottom: 6px;
+            border-radius: 7px;
+            font-size: 14px;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #1769aa;
+            color: white;
+        }
+
+        /* MAIN CONTENT */
+        .main {
+            margin-left: 250px;
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #0f766e;
+            padding-bottom: 22px;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            margin: 0 0 8px;
+            color: #0f766e;
+            font-size: 30px;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            color: #64748b;
+            margin: 5px 0;
+            font-size: 13px;
+        }
+
+        .title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .title-row h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .status {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status.finalized {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .section {
+            margin-bottom: 28px;
+        }
+
+        .section h3 {
+            color: #0f766e;
+            font-size: 17px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 10px;
+            margin-bottom: 18px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .info-item label {
+            display: block;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 7px;
+        }
+
+        .info-item p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .clinical-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .clinical-box strong {
+            display: block;
+            color: #0f766e;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .clinical-box p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
+
+        .medicine-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .medicine-table th,
+        .medicine-table td {
+            border: 1px solid #e2e8f0;
+            padding: 12px 10px;
+            text-align: left;
+            font-size: 13px;
+            vertical-align: top;
+        }
+
+        .medicine-table th {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .medicine-table td {
+            line-height: 1.5;
+        }
+
+        .empty {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        /* QR VERIFICATION */
+        .qr-section {
+            margin: 30px auto;
+            padding: 22px;
+            max-width: 430px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .qr-section h3 {
+            color: #0f766e;
+            margin: 0 0 10px;
+            font-size: 18px;
+        }
+
+        .qr-section img {
+            width: 160px;
+            height: 160px;
+            margin: 12px auto;
+            display: block;
+        }
+
+        .qr-section p {
+            color: #64748b;
+            font-size: 12px;
+            line-height: 1.6;
+            margin: 6px 0;
+        }
+
+        .qr-id {
+            color: #334155 !important;
+            font-weight: bold;
+        }
+
+        .qr-note {
+            color: #0f766e !important;
+            font-weight: bold;
+        }
+
+        .doctor-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 55px;
+        }
+
+        .doctor-info {
+            text-align: center;
+            width: 230px;
+            border-top: 1px solid #64748b;
+            padding-top: 12px;
+        }
+
+        .doctor-info strong {
+            display: block;
+            font-size: 15px;
+        }
+
+        .doctor-info p {
+            color: #64748b;
+            font-size: 12px;
+            margin: 6px 0;
+        }
+
+        .footer {
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 18px;
+            margin-top: 35px;
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        /* ACTION BUTTONS */
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            border-radius: 7px;
+            text-decoration: none;
+            border: none;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .back-btn {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .back-btn:hover {
+            background: #cbd5e1;
+        }
+
+        .print-btn {
+            background: #0f766e;
+            color: white;
+        }
+
+        .print-btn:hover {
+            background: #115e59;
+        }
+
+        .edit-btn {
+            background: #2563eb;
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .delete-btn {
+            background: #dc2626;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #b91c1c;
+        }
+
+        .history-btn {
+            background: #7c3aed;
+            color: white;
+        }
+
+        .history-btn:hover {
+            background: #6d28d9;
+        }
+
+        /* MOBILE */
+        @media(max-width: 700px) {
+            .sidebar {
+                width: 190px;
+            }
+
+            .main {
+                margin-left: 190px;
+                padding: 15px 10px;
+            }
+
+            .container {
+                padding: 22px 16px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .medicine-table th,
+            .medicine-table td {
+                padding: 8px 5px;
+                font-size: 11px;
+            }
+
+            .actions {
+                gap: 8px;
+            }
+
+            .btn {
+                padding: 10px 12px;
+                font-size: 12px;
+            }
+        }
+
+        @media(max-width: 480px) {
+            .sidebar {
+                width: 150px;
+                padding: 18px 10px;
+            }
+
+            .sidebar h2 {
+                font-size: 15px;
+            }
+
+            .sidebar a {
+                font-size: 12px;
+                padding: 10px 8px;
+            }
+
+            .main {
+                margin-left: 150px;
+                padding: 10px 6px;
+            }
+
+            .container {
+                padding: 18px 12px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .title-row h2 {
+                font-size: 18px;
+            }
+        }
+
+        /* PRINT */
+        @media print {
+            @page {
+                size: A4;
+                margin: 15mm;
+            }
+
+            body {
+                padding: 0;
+                background: white;
+            }
+
+            .sidebar {
+                display: none !important;
+            }
+
+            .main {
+                margin: 0;
+                padding: 0;
+            }
+
+            .container {
+                max-width: 100%;
+                padding: 0;
+                box-shadow: none;
+                border-radius: 0;
+            }
+
+            .actions {
+                display: none !important;
+            }
+
+            .section,
+            .doctor-section,
+            .qr-section {
+                page-break-inside: avoid;
+            }
+
+            .medicine-table {
+                page-break-inside: auto;
+            }
+
+            .medicine-table tr {
+                page-break-inside: avoid;
+            }
+
+            .header h1 {
+                color: #0f766e !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .status,
+            .clinical-box,
+            .medicine-table th,
+            .qr-section {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <h2>SRM MEDICAL HALL</h2>
+        <p>Pharmacy Management System</p>
+
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+
+        {% if request.user.is_superuser or request.user.profile.role == 'ADMIN' %}
+
+            <a href="{% url 'patient_list' %}">Patients</a>
+            <a href="{% url 'prescription_list' %}" class="active">Prescriptions</a>
+            <a href="#">Medicine Inventory</a>
+            <a href="#">Sales & Billing</a>
+            <a href="#">Purchases & Suppliers</a>
+            <a href="#">Reports & Analytics</a>
+            <a href="#">Registration Approvals</a>
+            <a href="#">Settings</a>
+
+        {% elif request.user.profile.role == 'STAFF' %}
+
+            <a href="{% url 'patient_list' %}">Patients</a>
+            <a href="{% url 'prescription_list' %}" class="active">Prescriptions</a>
+            <a href="#">Inventory</a>
+            <a href="#">Sales</a>
+            <a href="#">Purchases</a>
+
+        {% elif request.user.profile.role == 'DOCTOR' %}
+
+            <a href="{% url 'doctor_patients' %}">My Patients</a>
+            <a href="{% url 'prescription_list' %}" class="active">Digital Prescriptions</a>
+            <a href="{% url 'doctor_profile' %}">My Profile</a>
+
+        {% endif %}
+
+        <a href="{% url 'logout' %}">Logout</a>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main">
+
+        <div class="container">
+
+            <!-- PHARMACY HEADER -->
+            <header class="header">
+                <h1>SRM MEDICAL HALL</h1>
+                <p>Pharmacy Management System</p>
+                <p>Digital Doctor Prescription</p>
+            </header>
+
+            <!-- TITLE AND STATUS -->
+            <div class="title-row">
+                <h2>Prescription Details</h2>
+
+                <span class="status {% if prescription.status == 'FINALIZED' %}finalized{% endif %}">
+                    {{ prescription.get_status_display|upper }}
+                </span>
+            </div>
+
+            <!-- PRESCRIPTION INFORMATION -->
+            <section class="section">
+                <h3>Prescription Information</h3>
+
+                <div class="info-grid">
+
+                    <div class="info-item">
+                        <label>Prescription ID</label>
+                        <p>{{ prescription.prescription_id }}</p>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Prescription Date</label>
+                        <p>{{ prescription.created_at|date:"d M Y, h:i A" }}</p>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Last Updated</label>
+                        <p>{{ prescription.updated_at|date:"d M Y, h:i A" }}</p>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Finalized Date</label>
+                        <p>{{ prescription.finalized_at|date:"d M Y, h:i A"|default:"Not finalized" }}</p>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- PATIENT INFORMATION -->
+            <section class="section">
+                <h3>Patient Information</h3>
+
+                <div class="info-grid">
+
+                    <div class="info-item">
+                        <label>Patient Name</label>
+                        <p>{{ prescription.patient.full_name }}</p>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Patient ID</label>
+                        <p>{{ prescription.patient.patient_id }}</p>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Phone Number</label>
+                        <p>{{ prescription.patient.phone }}</p>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Blood Group</label>
+                        <p>{{ prescription.patient.blood_group }}</p>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- CLINICAL INFORMATION -->
+            <section class="section">
+                <h3>Clinical Information</h3>
+
+                <div class="clinical-box">
+                    <strong>C/C (Chief Complaints)</strong>
+                    <p>{{ prescription.chief_complaints|default:"Not provided" }}</p>
+                </div>
+
+                <div class="clinical-box">
+                    <strong>O/E (On Examination)</strong>
+                    <p>{{ prescription.on_examination|default:"Not provided" }}</p>
+                </div>
+
+                <div class="clinical-box">
+                    <strong>Diagnosis</strong>
+                    <p>{{ prescription.diagnosis|default:"Not provided" }}</p>
+                </div>
+
+                <div class="clinical-box">
+                    <strong>Adv (Advice)</strong>
+                    <p>{{ prescription.advice|default:"Not provided" }}</p>
+                </div>
+            </section>
+
+            <!-- PRESCRIBED MEDICINES -->
+            <section class="section">
+                <h3>Prescribed Medicines</h3>
+
+                <table class="medicine-table">
+                    <thead>
+                        <tr>
+                            <th>SL</th>
+                            <th>Medicine Name</th>
+                            <th>Dosage</th>
+                            <th>Frequency</th>
+                            <th>Duration</th>
+                            <th>Instructions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for medicine in prescription.medicines.all %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ medicine.medicine_name }}</td>
+                            <td>{{ medicine.dosage }}</td>
+                            <td>{{ medicine.frequency }}</td>
+                            <td>{{ medicine.duration }}</td>
+                            <td>{{ medicine.instructions|default:"-" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="empty">
+                                No medicines added.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- QR CODE VERIFICATION -->
+            {% if qr_code_data %}
+            <section class="qr-section">
+
+                <h3>Prescription Verification</h3>
+
+                <img
+                    src="data:image/png;base64,{{ qr_code_data }}"
+                    alt="Prescription Verification QR Code"
+                >
+
+                <p>
+                    Scan this QR code to verify the authenticity
+                    of this prescription.
+                </p>
+
+                <p class="qr-id">
+                    Verification ID: {{ prescription.prescription_id }}
+                </p>
+
+                <p class="qr-note">
+                    SRM MEDICAL HALL
+                </p>
+
+            </section>
+            {% endif %}
+
+            <!-- DOCTOR INFORMATION -->
+            <section class="doctor-section">
+                <div class="doctor-info">
+
+                    <strong>
+                        Dr. {{ prescription.doctor.get_full_name|default:prescription.doctor.username }}
+                    </strong>
+
+                    {% if prescription.doctor.profile.qualification %}
+                        <p>{{ prescription.doctor.profile.qualification }}</p>
+                    {% endif %}
+
+                    {% if prescription.doctor.profile.specialization %}
+                        <p>{{ prescription.doctor.profile.specialization }}</p>
+                    {% endif %}
+
+                    {% if prescription.doctor.profile.bmdc_number %}
+                        <p>BMDC No: {{ prescription.doctor.profile.bmdc_number }}</p>
+                    {% endif %}
+
+                    <p>Prescribing Doctor</p>
+
+                </div>
+            </section>
+
+            <!-- FOOTER -->
+            <div class="footer">
+                <p>SRM MEDICAL HALL | Digital Prescription System</p>
+                <p>Prescription ID: {{ prescription.prescription_id }}</p>
+            </div>
+
+            <!-- ACTION BUTTONS -->
+            <div class="actions">
+
+                <a href="javascript:history.back()" class="btn back-btn">
+                    ← Go Back
+                </a>
+
+                {% if request.user.is_superuser or request.user.profile.role == 'ADMIN' or request.user.profile.role == 'STAFF' or prescription.doctor_id == request.user.id %}
+
+                    <a href="{% url 'prescription_history' prescription.prescription_id %}"
+                       class="btn history-btn">
+                        Version History
+                    </a>
+
+                    <a href="{% url 'prescription_edit' prescription.prescription_id %}"
+                       class="btn edit-btn">
+                        Edit Prescription
+                    </a>
+
+                    <a href="{% url 'prescription_delete' prescription.prescription_id %}"
+                       class="btn delete-btn">
+                        Delete Prescription
+                    </a>
+
+                {% endif %}
+
+                {% if request.user.is_superuser or request.user.profile.role == 'ADMIN' or request.user.profile.role == 'STAFF' %}
+
+                    <button type="button"
+                            onclick="window.print()"
+                            class="btn print-btn">
+                        Print Prescription
+                    </button>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Prescription | SRM MEDICAL HALL</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 30px 15px;
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            color: #263247;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 60px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,.06);
+        }
+
+        h1 { color: #b42323; margin-top: 0; }
+
+        .info {
+            background: #f3f6fb;
+            padding: 18px;
+            border-radius: 8px;
+            line-height: 2;
+            margin: 20px 0;
+        }
+
+        .warning {
+            background: #fff0f0;
+            color: #a32121;
+            padding: 15px;
+            border-radius: 7px;
+            line-height: 1.6;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin: 20px 0 8px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            border: 1px solid #d5dce6;
+            border-radius: 7px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        button, .cancel {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 18px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .delete {
+            background: #c62828;
+            color: white;
+        }
+
+        .cancel {
+            background: #e8edf3;
+            color: #263247;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Delete Prescription</h1>
+
+    <div class="warning">
+        <strong>Warning:</strong> This prescription will be removed from the
+        normal directory. It will not be permanently erased from the database.
+        Its previous information will remain in Version History.
+    </div>
+
+    <div class="info">
+        <strong>Prescription ID:</strong>
+        {{ prescription.prescription_id }}<br>
+
+        <strong>Patient:</strong>
+        {{ prescription.patient.full_name }}<br>
+
+        <strong>Doctor:</strong>
+        {{ prescription.doctor.get_full_name|default:prescription.doctor.username }}<br>
+
+        <strong>Status:</strong>
+        {{ prescription.get_status_display }}
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>
+            Reason for Deletion
+            {% if prescription.status == 'FINALIZED' %}(Required){% else %}(Optional){% endif %}
+        </label>
+
+        <textarea
+            name="reason"
+            placeholder="Explain why this prescription needs to be deleted..."
+            {% if prescription.status == 'FINALIZED' %}required{% endif %}
+        ></textarea>
+
+        <br>
+
+        <button type="submit" class="delete">
+            Confirm Delete
+        </button>
+
+        <a
+            href="{% url 'prescription_detail' prescription.prescription_id %}"
+            class="cancel"
+        >
+            Cancel
+        </a>
+    </form>
+
+</div>
+
+</body>
+</html>

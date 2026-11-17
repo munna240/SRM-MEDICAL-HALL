@@ -1,0 +1,498 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Management | SRM MEDICAL HALL</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f3f6f9;
+            color: #263b39;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #073b36;
+            color: white;
+            padding: 28px 20px;
+        }
+
+        .brand {
+            text-align: center;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #315b55;
+        }
+
+        .brand h2 {
+            font-size: 20px;
+            letter-spacing: 1px;
+        }
+
+        .brand p {
+            font-size: 10px;
+            color: #b7d4cd;
+            margin-top: 7px;
+        }
+
+        .menu {
+            margin-top: 35px;
+        }
+
+        .menu a {
+            display: block;
+            text-decoration: none;
+            color: #d6e7e2;
+            padding: 14px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background: #087c69;
+            color: white;
+        }
+
+        .main {
+            margin-left: 250px;
+            padding: 35px;
+        }
+
+        .topbar {
+            background: white;
+            padding: 22px 25px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.03);
+        }
+
+        .topbar h1 {
+            color: #073b36;
+            font-size: 23px;
+        }
+
+        .role {
+            background: #e3f4ef;
+            color: #087c69;
+            padding: 9px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .intro {
+            margin: 30px 0 22px;
+        }
+
+        .intro h2 {
+            font-size: 21px;
+            margin-bottom: 8px;
+        }
+
+        .intro p {
+            color: #7b8988;
+            font-size: 14px;
+        }
+
+        .summary {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            min-width: 210px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.035);
+        }
+
+        .summary-card p {
+            color: #7b8988;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .summary-card h2 {
+            color: #087c69;
+            font-size: 28px;
+        }
+
+        .patient-section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.035);
+        }
+
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+        }
+
+        .section-heading h2 {
+            font-size: 18px;
+            color: #073b36;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .search {
+            padding: 11px 13px;
+            border: 1px solid #dce5e2;
+            border-radius: 7px;
+            outline: none;
+            width: 220px;
+        }
+
+        .search:focus {
+            border-color: #087c69;
+        }
+
+        .add-btn {
+            background: #087c69;
+            color: white;
+            padding: 11px 16px;
+            text-decoration: none;
+            border-radius: 7px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .add-btn:hover {
+            background: #065c50;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 15px 12px;
+            border-bottom: 1px solid #edf0f4;
+            font-size: 13px;
+        }
+
+        th {
+            background: #f7f9fc;
+            color: #64748b;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        td {
+            color: #334155;
+        }
+
+        .patient-id {
+            color: #087c69;
+            font-weight: bold;
+        }
+
+        .blood {
+            background: #fff1f2;
+            color: #be123c;
+            padding: 5px 9px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .doctor {
+            color: #087c69;
+            font-weight: bold;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 45px 15px;
+            color: #718096;
+        }
+
+        .empty h3 {
+            color: #334155;
+            margin-bottom: 10px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            text-decoration: none;
+            color: #087c69;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        @media(max-width: 768px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 18px;
+            }
+
+            .topbar {
+                flex-wrap: wrap;
+            }
+
+            .search {
+                width: 100%;
+            }
+
+            .actions {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<aside class="sidebar">
+
+    <div class="brand">
+        <h2>SRM MEDICAL HALL</h2>
+        <p>PHARMACY MANAGEMENT SYSTEM</p>
+    </div>
+
+    <nav class="menu">
+
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+
+        <a href="{% url 'patient_list' %}" class="active">
+            Patients
+        </a>
+
+        <a href="{% url 'patient_register' %}">
+            Register Patient
+        </a>
+
+    </nav>
+
+</aside>
+
+
+<main class="main">
+
+    <div class="topbar">
+
+        <h1>Patient Management</h1>
+
+        <span class="role">PATIENT MANAGEMENT</span>
+
+    </div>
+
+
+    <div class="intro">
+
+        <h2>Patient Directory</h2>
+
+        <p>
+            View and manage registered patient information.
+        </p>
+
+    </div>
+
+
+    <div class="summary">
+
+        <div class="summary-card">
+            <p>Total Active Patients</p>
+            <h2>{{ patients|length }}</h2>
+        </div>
+
+    </div>
+
+
+    <section class="patient-section">
+
+        <div class="section-heading">
+
+            <h2>Registered Patients</h2>
+
+            <div class="actions">
+
+                <input
+                    type="text"
+                    id="patientSearch"
+                    class="search"
+                    placeholder="Search patient..."
+                    onkeyup="searchPatients()"
+                >
+
+                <a href="{% url 'patient_register' %}" class="add-btn">
+                    + Register Patient
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table id="patientTable">
+
+                <thead>
+
+                    <tr>
+                        <th>Patient ID</th>
+                        <th>Patient Name</th>
+                        <th>Phone</th>
+                        <th>Gender</th>
+                        <th>Blood Group</th>
+                        <th>Assigned Doctor</th>
+                        <th>Registered Date</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for patient in patients %}
+
+                    <tr>
+
+                        <td class="patient-id">
+    <a href="{% url 'patient_detail' patient.patient_id %}"
+       style="color:#087c69; font-weight:bold; text-decoration:none;">
+        {{ patient.patient_id }}
+    </a>
+</td>
+
+                        <td>
+                            {{ patient.full_name }}
+                        </td>
+
+                        <td>
+                            {{ patient.phone }}
+                        </td>
+
+                        <td>
+                            {{ patient.get_gender_display }}
+                        </td>
+
+                        <td>
+                            <span class="blood">
+                                {{ patient.blood_group }}
+                            </span>
+                        </td>
+
+                        <td class="doctor">
+
+                            {% if patient.assigned_doctor %}
+                                Dr. {{ patient.assigned_doctor.get_full_name|default:patient.assigned_doctor.username }}
+                            {% else %}
+                                Not Assigned
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {{ patient.created_at|date:"d M Y" }}
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="7">
+
+                            <div class="empty">
+
+                                <h3>No Patients Registered</h3>
+
+                                <p>
+                                    Start by registering your first patient.
+                                </p>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <a href="{% url 'dashboard' %}" class="back-link">
+        ← Back to Dashboard
+    </a>
+
+</main>
+
+
+<script>
+
+    function searchPatients() {
+
+        const input = document.getElementById("patientSearch");
+
+        const filter = input.value.toLowerCase();
+
+        const rows = document.querySelectorAll(
+            "#patientTable tbody tr"
+        );
+
+        rows.forEach(function(row) {
+
+            const text = row.innerText.toLowerCase();
+
+            row.style.display = text.includes(filter) ? "" : "none";
+
+        });
+
+    }
+
+</script>
+
+</body>
+</html>

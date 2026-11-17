@@ -1,0 +1,294 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Prescription | SRM MEDICAL HALL</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 30px 15px;
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            color: #263247;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,.06);
+        }
+
+        h1 { color: #102b46; margin-top: 0; }
+        h2 { color: #1769aa; font-size: 19px; margin-top: 30px; }
+
+        .info {
+            background: #edf5fc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin: 15px 0 7px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #d5dce6;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        textarea { min-height: 85px; resize: vertical; }
+
+        .medicine {
+            border: 1px solid #dce3eb;
+            padding: 18px;
+            border-radius: 8px;
+            margin: 15px 0;
+            background: #fafcff;
+        }
+
+        .medicine-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        button, .back {
+            border: none;
+            padding: 12px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 18px;
+        }
+
+        .save {
+            background: #1769aa;
+            color: white;
+        }
+
+        .add {
+            background: #e5f2ff;
+            color: #1769aa;
+        }
+
+        .remove {
+            background: #ffe8e8;
+            color: #bd3030;
+        }
+
+        .back {
+            background: #e8edf3;
+            color: #263247;
+        }
+
+        .warning {
+            background: #fff5df;
+            color: #805600;
+            padding: 13px;
+            border-radius: 7px;
+            margin: 15px 0;
+        }
+
+        @media(max-width: 650px) {
+            .medicine-grid { grid-template-columns: 1fr; }
+            .container { padding: 20px; }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Edit Prescription</h1>
+    <p>SRM MEDICAL HALL — Prescription Management</p>
+
+    <div class="info">
+        <strong>Prescription ID:</strong> {{ prescription.prescription_id }}<br>
+        <strong>Patient:</strong> {{ prescription.patient.full_name }}<br>
+        <strong>Doctor:</strong> {{ prescription.doctor.get_full_name|default:prescription.doctor.username }}<br>
+        <strong>Status:</strong> {{ prescription.get_status_display }}
+    </div>
+
+    {% if prescription.status == 'FINALIZED' %}
+    <div class="warning">
+        This is a finalized prescription. A reason is required for every edit.
+        The previous version will be preserved in the history.
+    </div>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <h2>Clinical Information</h2>
+
+        <label>Chief Complaints (C/C)</label>
+        <textarea name="chief_complaints">{{ prescription.chief_complaints }}</textarea>
+
+        <label>On Examination (O/E)</label>
+        <textarea name="on_examination">{{ prescription.on_examination }}</textarea>
+
+        <label>Diagnosis</label>
+        <textarea name="diagnosis">{{ prescription.diagnosis }}</textarea>
+
+        <label>Advice</label>
+        <textarea name="advice">{{ prescription.advice }}</textarea>
+
+        <h2>Medicines</h2>
+
+        <div id="medicineContainer">
+
+            {% for medicine in prescription.medicines.all %}
+            <div class="medicine">
+
+                <div class="medicine-grid">
+
+                    <div>
+                        <label>Medicine Name</label>
+                        <input type="text" name="medicine_name[]" value="{{ medicine.medicine_name }}">
+                    </div>
+
+                    <div>
+                        <label>Dosage</label>
+                        <input type="text" name="dosage[]" value="{{ medicine.dosage }}">
+                    </div>
+
+                    <div>
+                        <label>Frequency</label>
+                        <input type="text" name="frequency[]" value="{{ medicine.frequency }}">
+                    </div>
+
+                    <div>
+                        <label>Duration</label>
+                        <input type="text" name="duration[]" value="{{ medicine.duration }}">
+                    </div>
+
+                </div>
+
+                <label>Instructions</label>
+                <textarea name="instructions[]">{{ medicine.instructions }}</textarea>
+
+                <button type="button" class="remove" onclick="removeMedicine(this)">
+                    Remove Medicine
+                </button>
+
+            </div>
+            {% empty %}
+            <div class="medicine">
+                <div class="medicine-grid">
+                    <div>
+                        <label>Medicine Name</label>
+                        <input type="text" name="medicine_name[]">
+                    </div>
+                    <div>
+                        <label>Dosage</label>
+                        <input type="text" name="dosage[]">
+                    </div>
+                    <div>
+                        <label>Frequency</label>
+                        <input type="text" name="frequency[]">
+                    </div>
+                    <div>
+                        <label>Duration</label>
+                        <input type="text" name="duration[]">
+                    </div>
+                </div>
+                <label>Instructions</label>
+                <textarea name="instructions[]"></textarea>
+                <button type="button" class="remove" onclick="removeMedicine(this)">
+                    Remove Medicine
+                </button>
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <button type="button" class="add" onclick="addMedicine()">
+            + Add Medicine
+        </button>
+
+        <h2>Change Reason</h2>
+
+        <label>Reason for Edit {% if prescription.status == 'FINALIZED' %}(Required){% else %}(Optional){% endif %}</label>
+        <textarea name="reason" placeholder="Explain why this prescription is being changed..."></textarea>
+
+        <br>
+
+        <button type="submit" class="save">
+            Save Changes
+        </button>
+
+        <a href="{% url 'prescription_detail' prescription.prescription_id %}" class="back">
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+<script>
+function addMedicine() {
+    const container = document.getElementById('medicineContainer');
+
+    const medicine = document.createElement('div');
+    medicine.className = 'medicine';
+
+    medicine.innerHTML = `
+        <div class="medicine-grid">
+            <div>
+                <label>Medicine Name</label>
+                <input type="text" name="medicine_name[]">
+            </div>
+            <div>
+                <label>Dosage</label>
+                <input type="text" name="dosage[]">
+            </div>
+            <div>
+                <label>Frequency</label>
+                <input type="text" name="frequency[]">
+            </div>
+            <div>
+                <label>Duration</label>
+                <input type="text" name="duration[]">
+            </div>
+        </div>
+        <label>Instructions</label>
+        <textarea name="instructions[]"></textarea>
+        <button type="button" class="remove" onclick="removeMedicine(this)">
+            Remove Medicine
+        </button>
+    `;
+
+    container.appendChild(medicine);
+}
+
+function removeMedicine(button) {
+    const container = document.getElementById('medicineContainer');
+
+    if (container.children.length > 1) {
+        button.closest('.medicine').remove();
+    } else {
+        alert('At least one medicine section must remain.');
+    }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,304 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile | SRM MEDICAL HALL</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f3f6fb;
+            color: #263445;
+        }
+
+        .header {
+            background: #102b46;
+            color: white;
+            padding: 22px 7%;
+        }
+
+        .header h2 {
+            font-size: 22px;
+        }
+
+        .header p {
+            color: #c6d6e6;
+            margin-top: 6px;
+            font-size: 13px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 13px;
+            box-shadow: 0 5px 22px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            font-size: 25px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #7b8797;
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            color: #087f8c;
+            margin: 25px 0 18px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e8edf3;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dce3ec;
+            border-radius: 7px;
+            outline: none;
+            font-size: 14px;
+            background: #fbfcfe;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #087f8c;
+            background: white;
+        }
+
+        input[type="file"] {
+            background: white;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .current-image {
+            max-width: 110px;
+            max-height: 110px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .current-signature {
+            max-width: 200px;
+            max-height: 80px;
+            object-fit: contain;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        button, .cancel {
+            padding: 12px 22px;
+            border: none;
+            border-radius: 7px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        button {
+            background: #087f8c;
+            color: white;
+        }
+
+        .cancel {
+            background: #e8edf3;
+            color: #263445;
+        }
+
+        .note {
+            background: #eef7f8;
+            padding: 13px;
+            border-radius: 7px;
+            color: #386b72;
+            font-size: 13px;
+            margin-top: 22px;
+        }
+
+        @media(max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full {
+                grid-column: auto;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h2>SRM MEDICAL HALL</h2>
+        <p>Doctor Professional Portal</p>
+    </div>
+
+    <div class="container">
+
+        <div class="card">
+
+            <h1>Edit My Profile</h1>
+            <p class="subtitle">
+                Update your professional and contact information.
+            </p>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <h3 class="section-title">Personal Information</h3>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" name="first_name"
+                               value="{{ request.user.first_name }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" name="last_name"
+                               value="{{ request.user.last_name }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="text" name="phone"
+                               value="{{ profile.phone }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email"
+                               value="{{ request.user.email }}" disabled>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>Address</label>
+                        <textarea name="address">{{ profile.address }}</textarea>
+                    </div>
+
+                </div>
+
+                <h3 class="section-title">Professional Information</h3>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>Qualification</label>
+                        <input type="text" name="qualification"
+                               value="{{ profile.qualification }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Specialization</label>
+                        <input type="text" name="specialization"
+                               value="{{ profile.specialization }}" required>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>BMDC Registration Number</label>
+                        <input type="text" name="bmdc_number"
+                               value="{{ profile.bmdc_number }}" required>
+                    </div>
+
+                </div>
+
+                <h3 class="section-title">Profile Picture</h3>
+
+                <div class="form-group">
+                    {% if profile.profile_picture %}
+                        <img src="{{ profile.profile_picture.url }}"
+                             class="current-image" alt="Current Profile Picture">
+                    {% endif %}
+
+                    <label>Upload New Profile Picture</label>
+                    <input type="file" name="profile_picture" accept="image/*">
+                </div>
+
+                <h3 class="section-title">Doctor's Signature</h3>
+
+                <div class="form-group">
+                    {% if profile.signature %}
+                        <img src="{{ profile.signature.url }}"
+                             class="current-signature" alt="Current Signature">
+                    {% endif %}
+
+                    <label>Upload New Signature</label>
+                    <input type="file" name="signature" accept="image/*">
+                </div>
+
+                <div class="note">
+                    Your account role and Admin approval status cannot be changed from this page.
+                </div>
+
+                <div class="actions">
+                    <button type="submit">Save Changes</button>
+
+                    <a href="{% url 'doctor_profile' %}" class="cancel">
+                        Cancel
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

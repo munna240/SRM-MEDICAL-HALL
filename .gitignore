@@ -1,0 +1,11 @@
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+db.sqlite3
+.env
+media/
+profiles/
+doctor_signatures/
+staticfiles/
+.DS_Store

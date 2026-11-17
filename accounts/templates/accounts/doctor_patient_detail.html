@@ -1,0 +1,387 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Details | SRM MEDICAL HALL</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #263445;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            background: #142b45;
+            color: white;
+            padding: 28px 18px;
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: bold;
+            padding: 0 12px 35px;
+            line-height: 1.5;
+        }
+
+        .brand span {
+            display: block;
+            font-size: 11px;
+            color: #9eb5cb;
+            letter-spacing: 2px;
+        }
+
+        .menu a {
+            display: block;
+            text-decoration: none;
+            color: #c7d4e2;
+            padding: 14px 15px;
+            border-radius: 7px;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background: #246b91;
+            color: white;
+        }
+
+        .main {
+            margin-left: 250px;
+            padding: 30px;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .topbar h1 {
+            font-size: 25px;
+        }
+
+        .role {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 9px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .profile-card {
+            background: white;
+            padding: 28px;
+            border-radius: 13px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.04);
+            margin-bottom: 25px;
+        }
+
+        .profile-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .profile-heading h2 {
+            font-size: 23px;
+            margin-bottom: 8px;
+        }
+
+        .patient-id {
+            color: #087e8b;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 13px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.04);
+            margin-bottom: 22px;
+            border: 1px solid #edf0f4;
+        }
+
+        .section h2 {
+            font-size: 18px;
+            margin-bottom: 22px;
+            color: #142b45;
+            border-bottom: 1px solid #edf0f4;
+            padding-bottom: 14px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .info-item label {
+            display: block;
+            color: #8492a6;
+            font-size: 12px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .info-item p {
+            color: #334155;
+            font-size: 14px;
+            line-height: 1.6;
+            word-break: break-word;
+        }
+
+        .blood {
+            display: inline-block;
+            background: #fff1f2;
+            color: #be123c;
+            padding: 6px 11px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .prescription-action {
+            background: #f0fdfa;
+            border: 1px solid #ccfbf1;
+            border-radius: 10px;
+            padding: 22px;
+            margin-top: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .prescription-action h3 {
+            color: #115e59;
+            font-size: 17px;
+            margin-bottom: 7px;
+        }
+
+        .prescription-action p {
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .create-btn {
+            display: inline-block;
+            background: #087e8b;
+            color: white;
+            padding: 13px 22px;
+            border-radius: 7px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .create-btn:hover {
+            background: #065f68;
+            transform: translateY(-1px);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 5px;
+            text-decoration: none;
+            color: #087e8b;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        @media(max-width: 768px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .prescription-action {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<aside class="sidebar">
+
+    <div class="brand">
+        SRM MEDICAL HALL
+        <span>DOCTOR PORTAL</span>
+    </div>
+
+    <nav class="menu">
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+        <a href="{% url 'doctor_patients' %}" class="active">My Patients</a>
+        <a href="#">Digital Prescriptions</a>
+        <a href="{% url 'doctor_profile' %}">My Profile</a>
+    </nav>
+
+</aside>
+
+<main class="main">
+
+    <div class="topbar">
+        <h1>Patient Details</h1>
+        <span class="role">DOCTOR PORTAL</span>
+    </div>
+
+    <div class="profile-card">
+
+        <div class="profile-heading">
+            <div>
+                <h2>{{ patient.full_name }}</h2>
+                <p class="patient-id">{{ patient.patient_id }}</p>
+            </div>
+        </div>
+
+        <section class="section">
+            <h2>Personal Information</h2>
+
+            <div class="info-grid">
+
+                <div class="info-item">
+                    <label>Full Name</label>
+                    <p>{{ patient.full_name }}</p>
+                </div>
+
+                <div class="info-item">
+                    <label>Phone Number</label>
+                    <p>{{ patient.phone }}</p>
+                </div>
+
+                <div class="info-item">
+                    <label>Date of Birth</label>
+                    <p>{{ patient.date_of_birth|date:"d M Y"|default:"Not provided" }}</p>
+                </div>
+
+                <div class="info-item">
+                    <label>Gender</label>
+                    <p>{{ patient.get_gender_display }}</p>
+                </div>
+
+                <div class="info-item">
+                    <label>Blood Group</label>
+                    <p>
+                        <span class="blood">{{ patient.blood_group }}</span>
+                    </p>
+                </div>
+
+                <div class="info-item">
+                    <label>Address</label>
+                    <p>{{ patient.address|default:"Not provided" }}</p>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Medical Information</h2>
+
+            <div class="info-grid">
+
+                <div class="info-item">
+                    <label>Known Allergies</label>
+                    <p>{{ patient.allergies|default:"No allergies recorded" }}</p>
+                </div>
+
+                <div class="info-item">
+                    <label>Medical History</label>
+                    <p>{{ patient.medical_history|default:"No medical history recorded" }}</p>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Registration Information</h2>
+
+            <div class="info-grid">
+
+                <div class="info-item">
+                    <label>Patient ID</label>
+                    <p>{{ patient.patient_id }}</p>
+                </div>
+
+                <div class="info-item">
+                    <label>Registration Date</label>
+                    <p>{{ patient.created_at|date:"d M Y, h:i A" }}</p>
+                </div>
+
+                <div class="info-item">
+                    <label>Last Updated</label>
+                    <p>{{ patient.updated_at|date:"d M Y, h:i A" }}</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- CREATE PRESCRIPTION -->
+
+        <div class="prescription-action">
+
+            <div>
+                <h3>Digital Prescription</h3>
+                <p>
+                    Create and save a digital prescription for this patient.
+                    The prescription will be stored in the system.
+                </p>
+            </div>
+
+            <a href="{% url 'doctor_create_prescription' patient.patient_id %}"
+               class="create-btn">
+                + Create New Prescription
+            </a>
+
+        </div>
+
+    </div>
+
+    <a href="{% url 'doctor_patients' %}" class="back-link">
+        ← Back to My Patients
+    </a>
+
+</main>
+
+</body>
+</html>

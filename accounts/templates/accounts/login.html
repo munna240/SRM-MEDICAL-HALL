@@ -1,0 +1,260 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | SRM MEDICAL HALL</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e8f3f0, #f4f7fb);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 440px;
+            background: white;
+            padding: 42px;
+            border-radius: 16px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo {
+            width: 65px;
+            height: 65px;
+            margin: auto;
+            background: #073b36;
+            color: white;
+            border-radius: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        h1 {
+            text-align: center;
+            color: #073b36;
+            margin-top: 18px;
+            font-size: 24px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #819096;
+            font-size: 13px;
+            margin: 8px 0 30px;
+        }
+
+        label {
+            display: block;
+            color: #344b48;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #dce5e3;
+            border-radius: 8px;
+            outline: none;
+            margin-bottom: 20px;
+            font-size: 14px;
+            background: white;
+        }
+
+        input:focus, select:focus {
+            border-color: #087c69;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #087c69;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #073b36;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .message.error {
+            background: #fff0f0;
+            color: #c0392b;
+            border: 1px solid #ffd5d5;
+        }
+
+        .message.warning {
+            background: #fff8e8;
+            color: #946200;
+            border: 1px solid #f5dfaa;
+        }
+
+        .message.success {
+            background: #eaf8ef;
+            color: #217a43;
+            border: 1px solid #c5ebd1;
+        }
+
+        .registration-section {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #edf0ef;
+            text-align: center;
+        }
+
+        .registration-section p {
+            color: #819096;
+            font-size: 13px;
+            margin-bottom: 13px;
+        }
+
+        .register-link {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #087c69;
+            border-radius: 8px;
+            color: #087c69;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .register-link:hover {
+            background: #087c69;
+            color: white;
+        }
+
+        .footer {
+            text-align: center;
+            color: #899793;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 28px 22px;
+            }
+
+            h1 {
+                font-size: 21px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <div class="logo">SRM</div>
+
+        <h1>SRM MEDICAL HALL</h1>
+
+        <p class="subtitle">
+            Secure Pharmacy Management Portal
+        </p>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <label>Select Portal</label>
+
+            <select name="role" required>
+                <option value="">Choose your portal</option>
+                <option value="ADMIN">Admin</option>
+                <option value="STAFF">Staff</option>
+                <option value="DOCTOR">Doctor</option>
+            </select>
+
+            <label>Username</label>
+
+            <input
+                type="text"
+                name="username"
+                placeholder="Enter your username"
+                autocomplete="username"
+                required
+            >
+
+            <label>Password</label>
+
+            <input
+                type="password"
+                name="password"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+                required
+            >
+
+            <button type="submit">
+                Sign In
+            </button>
+
+        </form>
+
+        <div class="registration-section">
+
+            <p>Don't have an account? Register below.</p>
+
+            <a href="{% url 'staff_register' %}" class="register-link">
+                Register as Staff
+            </a>
+
+            <a href="{% url 'doctor_register' %}" class="register-link">
+                Register as Doctor
+            </a>
+
+        </div>
+
+        <div class="footer">
+            © 2026 SRM MEDICAL HALL. All Rights Reserved.
+        </div>
+
+    </div>
+
+</body>
+</html>

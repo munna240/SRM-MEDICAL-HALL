@@ -1,0 +1,349 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescriptions | SRM MEDICAL HALL</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            color: #263247;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #102b46;
+            color: white;
+            padding: 25px 18px;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            font-size: 20px;
+            margin: 0 0 8px;
+        }
+
+        .sidebar p {
+            color: #bdcddd;
+            font-size: 12px;
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #dce7f1;
+            text-decoration: none;
+            padding: 13px 14px;
+            margin-bottom: 6px;
+            border-radius: 7px;
+            font-size: 14px;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #1769aa;
+            color: white;
+        }
+
+        .main {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: white;
+            padding: 22px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.04);
+        }
+
+        .header h1 {
+            margin: 0 0 5px;
+            font-size: 23px;
+            color: #102b46;
+        }
+
+        .header p {
+            margin: 0;
+            color: #78869a;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 25px;
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 22px;
+        }
+
+        .top h2 { margin: 0; }
+
+        .top-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .search {
+            width: 280px;
+            padding: 11px 13px;
+            border: 1px solid #d5dce6;
+            border-radius: 7px;
+        }
+
+        .deleted-btn {
+            display: inline-block;
+            padding: 11px 15px;
+            background: #b91c1c;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .table-box {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            overflow-x: auto;
+            box-shadow: 0 4px 18px rgba(0,0,0,.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 750px;
+        }
+
+        th, td {
+            padding: 15px 12px;
+            text-align: left;
+            border-bottom: 1px solid #edf0f4;
+        }
+
+        th {
+            color: #66758a;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .status {
+            padding: 6px 11px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .draft {
+            background: #fff2d8;
+            color: #986000;
+        }
+
+        .finalized {
+            background: #dff7e9;
+            color: #147a43;
+        }
+
+        .view-btn {
+            display: inline-block;
+            padding: 8px 13px;
+            background: #1769aa;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 35px;
+            color: #78869a;
+        }
+
+        @media(max-width: 700px) {
+            .sidebar {
+                width: 190px;
+            }
+
+            .main {
+                margin-left: 190px;
+            }
+
+            .container {
+                padding: 0 12px;
+            }
+
+            .top {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .search { width: 100%; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <h2>SRM MEDICAL HALL</h2>
+        <p>Pharmacy Management System</p>
+
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+
+        {% if request.user.is_superuser or request.user.profile.role == 'ADMIN' %}
+            <a href="{% url 'patient_list' %}">Patients</a>
+            <a href="{% url 'prescription_list' %}" class="active">Prescriptions</a>
+
+            <a href="{% url 'deleted_prescription_list' %}">
+                Deleted Prescriptions
+            </a>
+
+            <a href="#">Medicine Inventory</a>
+            <a href="#">Sales & Billing</a>
+            <a href="#">Purchases & Suppliers</a>
+            <a href="#">Reports & Analytics</a>
+            <a href="#">Registration Approvals</a>
+            <a href="#">Settings</a>
+
+        {% elif request.user.profile.role == 'STAFF' %}
+            <a href="{% url 'patient_list' %}">Patients</a>
+            <a href="{% url 'prescription_list' %}" class="active">Prescriptions</a>
+
+            <a href="{% url 'deleted_prescription_list' %}">
+                Deleted Prescriptions
+            </a>
+
+            <a href="#">Inventory</a>
+            <a href="#">Sales</a>
+            <a href="#">Purchases</a>
+
+        {% elif request.user.profile.role == 'DOCTOR' %}
+            <a href="{% url 'doctor_patients' %}">My Patients</a>
+            <a href="{% url 'prescription_list' %}" class="active">Digital Prescriptions</a>
+            <a href="{% url 'doctor_profile' %}">My Profile</a>
+        {% endif %}
+
+        <a href="{% url 'logout' %}">Logout</a>
+    </aside>
+
+    <div class="main">
+
+        <header class="header">
+            <h1>SRM MEDICAL HALL</h1>
+            <p>Digital Prescription Management System</p>
+        </header>
+
+        <main class="container">
+
+            <div class="top">
+                <h2>Prescription Directory</h2>
+
+                <div class="top-actions">
+
+                    {% if request.user.is_superuser or request.user.profile.role == 'ADMIN' or request.user.profile.role == 'STAFF' %}
+
+                        <a href="{% url 'deleted_prescription_list' %}"
+                           class="deleted-btn">
+                            Deleted Prescriptions
+                        </a>
+
+                    {% endif %}
+
+                    <input
+                        type="text"
+                        id="searchInput"
+                        class="search"
+                        placeholder="Search prescription, patient or doctor..."
+                    >
+
+                </div>
+            </div>
+
+            <div class="table-box">
+                <table id="prescriptionTable">
+                    <thead>
+                        <tr>
+                            <th>Prescription ID</th>
+                            <th>Patient</th>
+                            <th>Doctor</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for prescription in prescriptions %}
+                        <tr>
+                            <td>{{ prescription.prescription_id }}</td>
+
+                            <td>{{ prescription.patient.full_name }}</td>
+
+                            <td>
+                                {{ prescription.doctor.get_full_name|default:prescription.doctor.username }}
+                            </td>
+
+                            <td>{{ prescription.created_at|date:"d M Y" }}</td>
+
+                            <td>
+                                {% if prescription.status == 'FINALIZED' %}
+                                    <span class="status finalized">Finalized</span>
+                                {% else %}
+                                    <span class="status draft">Draft</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <a class="view-btn"
+                                   href="{% url 'prescription_detail' prescription.prescription_id %}">
+                                    View Details
+                                </a>
+                            </td>
+                        </tr>
+
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="empty">
+                                No prescriptions found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const search = this.value.toLowerCase();
+
+            document.querySelectorAll('#prescriptionTable tbody tr').forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(search)
+                    ? ''
+                    : 'none';
+            });
+        });
+    </script>
+
+</body>
+</html>

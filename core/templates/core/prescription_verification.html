@@ -1,0 +1,201 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescription Verification | SRM MEDICAL HALL</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 550px;
+            background: white;
+            border-radius: 16px;
+            padding: 35px;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+        }
+
+        .brand {
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 22px;
+            margin-bottom: 25px;
+        }
+
+        .brand h1 {
+            color: #0f766e;
+            margin: 0;
+            font-size: 27px;
+        }
+
+        .brand p {
+            color: #64748b;
+            margin-bottom: 0;
+        }
+
+        .status {
+            text-align: center;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .verified {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .invalid {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status h2 {
+            margin: 0 0 8px;
+        }
+
+        .details {
+            margin-top: 20px;
+        }
+
+        .item {
+            padding: 14px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .label {
+            color: #64748b;
+            font-size: 13px;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .value {
+            color: #0f172a;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .privacy {
+            margin-top: 22px;
+            background: #f8fafc;
+            padding: 14px;
+            border-radius: 9px;
+            color: #475569;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .footer {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 12px;
+            margin-top: 25px;
+        }
+
+        @media(max-width: 480px) {
+            .container {
+                padding: 23px;
+            }
+
+            .brand h1 {
+                font-size: 23px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="brand">
+        <h1>SRM MEDICAL HALL</h1>
+        <p>Digital Prescription Verification System</p>
+    </div>
+
+    {% if verified %}
+
+        <div class="status verified">
+            <h2>✓ Prescription Verified</h2>
+            <p>This prescription is valid in our system.</p>
+        </div>
+
+        <div class="details">
+
+            <div class="item">
+                <span class="label">Prescription ID</span>
+                <span class="value">
+                    {{ prescription.prescription_id }}
+                </span>
+            </div>
+
+            <div class="item">
+                <span class="label">Prescribing Doctor</span>
+                <span class="value">
+                    Dr. {{ prescription.doctor.get_full_name|default:prescription.doctor.username }}
+                </span>
+            </div>
+
+            <div class="item">
+                <span class="label">Issue Date</span>
+                <span class="value">
+                    {{ prescription.finalized_at|date:"d M Y" }}
+                </span>
+            </div>
+
+            <div class="item">
+                <span class="label">Verification Status</span>
+                <span class="value" style="color:#16a34a;">
+                    AUTHENTIC
+                </span>
+            </div>
+
+        </div>
+
+        <div class="privacy">
+            <strong>Privacy Notice:</strong>
+            Patient personal information, diagnosis and medicine details
+            are protected and are not displayed on this public page.
+        </div>
+
+    {% else %}
+
+        <div class="status invalid">
+            <h2>✕ Verification Failed</h2>
+            <p>
+                This prescription could not be verified.
+                It may be invalid, deleted or not finalized.
+            </p>
+        </div>
+
+        <div class="privacy">
+            Please contact SRM MEDICAL HALL for further assistance.
+        </div>
+
+    {% endif %}
+
+    <div class="footer">
+        © SRM MEDICAL HALL | Digital Verification System
+    </div>
+
+</div>
+
+</body>
+</html>

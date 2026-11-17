@@ -1,0 +1,359 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Prescription | SRM MEDICAL HALL</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 30px 15px;
+            background: #f1f5f9;
+            font-family: Arial, sans-serif;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: auto;
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.07);
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #0f766e;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            color: #0f766e;
+            margin: 0 0 8px;
+            font-size: 28px;
+        }
+
+        .header p {
+            margin: 4px;
+            color: #64748b;
+        }
+
+        h2 {
+            font-size: 19px;
+            margin-top: 28px;
+            color: #0f766e;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+
+        .patient-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            background: #f8fafc;
+            padding: 18px;
+            border-radius: 8px;
+        }
+
+        .field { margin-bottom: 16px; }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 7px;
+            font-size: 14px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 75px;
+        }
+
+        .medicine-row {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr 1fr 1.5fr auto;
+            gap: 10px;
+            align-items: end;
+            padding: 15px;
+            margin-bottom: 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+
+        .medicine-row .field { margin: 0; }
+
+        .remove-btn {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: none;
+            padding: 11px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .add-btn {
+            background: #e0f2fe;
+            color: #0369a1;
+            border: none;
+            padding: 11px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .submit-btn {
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .draft-btn {
+            background: #d97706;
+        }
+
+        .finalize-btn {
+            background: #0f766e;
+        }
+
+        .draft-btn:hover { background: #b45309; }
+        .finalize-btn:hover { background: #115e59; }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            color: #475569;
+            text-decoration: none;
+        }
+
+        @media(max-width: 800px) {
+            .medicine-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media(max-width: 550px) {
+            .container { padding: 20px; }
+            .patient-info { grid-template-columns: 1fr; }
+            .medicine-row { grid-template-columns: 1fr; }
+            .actions { flex-direction: column; }
+            .submit-btn { width: 100%; }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>SRM MEDICAL HALL</h1>
+        <p>Digital Prescription Management System</p>
+        <p>Doctor's Prescription</p>
+    </div>
+
+    <h2>Patient Information</h2>
+
+    <div class="patient-info">
+        <div>
+            <strong>Patient Name:</strong><br>
+            {{ patient.full_name }}
+        </div>
+
+        <div>
+            <strong>Patient ID:</strong><br>
+            {{ patient.patient_id }}
+        </div>
+
+        <div>
+            <strong>Phone:</strong><br>
+            {{ patient.phone }}
+        </div>
+
+        <div>
+            <strong>Blood Group:</strong><br>
+            {{ patient.blood_group }}
+        </div>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <h2>Clinical Information</h2>
+
+        <div class="field">
+            <label>C/C (Chief Complaints)</label>
+            <textarea name="chief_complaints"></textarea>
+        </div>
+
+        <div class="field">
+            <label>O/E (On Examination)</label>
+            <textarea name="on_examination"></textarea>
+        </div>
+
+        <div class="field">
+            <label>Diagnosis</label>
+            <textarea name="diagnosis"></textarea>
+        </div>
+
+        <div class="field">
+            <label>Adv (Advice)</label>
+            <textarea name="advice"></textarea>
+        </div>
+
+        <h2>Prescribed Medicines</h2>
+
+        <div id="medicine-container">
+
+            <div class="medicine-row">
+
+                <div class="field">
+                    <label>Medicine Name</label>
+                    <input type="text" name="medicine_name[]" required>
+                </div>
+
+                <div class="field">
+                    <label>Dosage</label>
+                    <input type="text" name="dosage[]" placeholder="1 tablet">
+                </div>
+
+                <div class="field">
+                    <label>Frequency</label>
+                    <input type="text" name="frequency[]" placeholder="1+0+1">
+                </div>
+
+                <div class="field">
+                    <label>Duration</label>
+                    <input type="text" name="duration[]" placeholder="5 days">
+                </div>
+
+                <div class="field">
+                    <label>Instructions</label>
+                    <input type="text" name="instructions[]" placeholder="After meal">
+                </div>
+
+                <button type="button" class="remove-btn"
+                    onclick="removeMedicine(this)">
+                    Remove
+                </button>
+
+            </div>
+
+        </div>
+
+        <button type="button" class="add-btn" onclick="addMedicine()">
+            + Add Medicine
+        </button>
+
+        <div class="actions">
+
+            <button
+                type="submit"
+                name="action"
+                value="draft"
+                class="submit-btn draft-btn">
+                Save as Draft
+            </button>
+
+            <button
+                type="submit"
+                name="action"
+                value="finalize"
+                class="submit-btn finalize-btn"
+                onclick="return confirm('Are you sure you want to finalize this prescription?');">
+                Finalize Prescription
+            </button>
+
+        </div>
+
+    </form>
+
+    <a class="back-btn"
+       href="{% url 'doctor_patient_detail' patient.patient_id %}">
+        ← Back to Patient Details
+    </a>
+
+</div>
+
+<script>
+    function addMedicine() {
+
+        const container = document.getElementById('medicine-container');
+
+        const row = document.createElement('div');
+        row.className = 'medicine-row';
+
+        row.innerHTML = `
+            <div class="field">
+                <label>Medicine Name</label>
+                <input type="text" name="medicine_name[]" required>
+            </div>
+
+            <div class="field">
+                <label>Dosage</label>
+                <input type="text" name="dosage[]" placeholder="1 tablet">
+            </div>
+
+            <div class="field">
+                <label>Frequency</label>
+                <input type="text" name="frequency[]" placeholder="1+0+1">
+            </div>
+
+            <div class="field">
+                <label>Duration</label>
+                <input type="text" name="duration[]" placeholder="5 days">
+            </div>
+
+            <div class="field">
+                <label>Instructions</label>
+                <input type="text" name="instructions[]" placeholder="After meal">
+            </div>
+
+            <button type="button" class="remove-btn"
+                onclick="removeMedicine(this)">
+                Remove
+            </button>
+        `;
+
+        container.appendChild(row);
+    }
+
+    function removeMedicine(button) {
+
+        const rows = document.querySelectorAll('.medicine-row');
+
+        if (rows.length > 1) {
+            button.closest('.medicine-row').remove();
+        } else {
+            alert('At least one medicine row is required.');
+        }
+    }
+</script>
+
+</body>
+</html>

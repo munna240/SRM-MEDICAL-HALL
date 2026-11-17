@@ -1,0 +1,201 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRM MEDICAL HALL | Pharmacy Management</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #243247;
+        }
+
+        header {
+            background: #073b36;
+            color: white;
+            padding: 22px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand h1 {
+            font-size: 25px;
+            letter-spacing: 1px;
+        }
+
+        .brand p {
+            color: #b8ded5;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .status {
+            background: #145c50;
+            padding: 9px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .hero {
+            min-height: 430px;
+            padding: 85px 7%;
+            background: linear-gradient(120deg, #e4f3ef, #f4f7fb);
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-content {
+            max-width: 650px;
+        }
+
+        .tag {
+            color: #087c69;
+            font-weight: bold;
+            font-size: 13px;
+            letter-spacing: 2px;
+        }
+
+        .hero h2 {
+            font-size: 48px;
+            line-height: 1.2;
+            margin: 18px 0;
+            color: #073b36;
+        }
+
+        .hero p {
+            color: #657487;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .features {
+            padding: 55px 7%;
+        }
+
+        .features h2 {
+            text-align: center;
+            color: #073b36;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 22px;
+        }
+
+        .card {
+            background: white;
+            padding: 28px;
+            border-radius: 12px;
+            border: 1px solid #e4eaf0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.04);
+        }
+
+        .card h3 {
+            color: #087c69;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            color: #718096;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        footer {
+            background: #073b36;
+            color: #c5d8d4;
+            text-align: center;
+            padding: 22px;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            .hero h2 {
+                font-size: 34px;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="brand">
+            <h1>SRM MEDICAL HALL</h1>
+            <p>SMART PHARMACY MANAGEMENT SYSTEM</p>
+        </div>
+
+        <div class="status">● SYSTEM ONLINE</div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="tag">DIGITAL PHARMACY PLATFORM</div>
+
+            <h2>Smarter Pharmacy.<br>Better Healthcare.</h2>
+
+            <p>
+                A modern pharmacy management platform for digital
+                prescriptions, medicine inventory, patient records,
+                billing and intelligent pharmacy operations.
+            </p>
+        </div>
+    </section>
+
+    <section class="features">
+        <h2>Our Management Modules</h2>
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>Digital Prescription</h3>
+                <p>Create and manage professional digital prescriptions
+                with doctor information and QR verification.</p>
+            </div>
+
+            <div class="card">
+                <h3>Medicine Inventory</h3>
+                <p>Manage medicine stock, batches, expiry dates and
+                low-stock notifications.</p>
+            </div>
+
+            <div class="card">
+                <h3>Sales & Billing</h3>
+                <p>Manage medicine sales, invoices, payments and
+                transaction history.</p>
+            </div>
+
+            <div class="card">
+                <h3>Patient Records</h3>
+                <p>Maintain patient profiles, medical history,
+                allergies and prescription records.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <footer>
+        © 2026 SRM MEDICAL HALL. All Rights Reserved.
+    </footer>
+
+</body>
+</html>

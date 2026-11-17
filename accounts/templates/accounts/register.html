@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ role }} Registration | SRM MEDICAL HALL</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 35px 15px;
+            background: #f0f5f4;
+            font-family: Arial, sans-serif;
+            color: #243b3b;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: auto;
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0,0,0,.08);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .header h1 {
+            color: #087e70;
+            margin-bottom: 8px;
+            font-size: 25px;
+        }
+
+        .header p { color: #718080; }
+
+        label {
+            display: block;
+            margin: 16px 0 7px;
+            font-weight: 600;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d7e2df;
+            border-radius: 7px;
+            font-size: 14px;
+        }
+
+        textarea { min-height: 80px; }
+
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 14px;
+            border: none;
+            border-radius: 7px;
+            background: #087e70;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover { background: #06675c; }
+
+        .errors {
+            color: #c0392b;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .login {
+            text-align: center;
+            margin-top: 22px;
+        }
+
+        a { color: #087e70; text-decoration: none; }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>SRM MEDICAL HALL</h1>
+        <h2>{{ role }} Registration</h2>
+        <p>Create your professional account</p>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% for field in form %}
+
+            <label>{{ field.label }}</label>
+
+            {{ field }}
+
+            {% for error in field.errors %}
+                <div class="errors">{{ error }}</div>
+            {% endfor %}
+
+        {% endfor %}
+
+        {% for error in form.non_field_errors %}
+            <div class="errors">{{ error }}</div>
+        {% endfor %}
+
+        <button type="submit">Submit Registration</button>
+
+    </form>
+
+    <div class="login">
+        Already registered?
+        <a href="{% url 'login' %}">Login Here</a>
+    </div>
+
+</div>
+
+</body>
+</html>
