@@ -64,6 +64,12 @@ class UserProfile(models.Model):
         null=True
     )
 
+    seal = models.ImageField(
+        upload_to='doctor_seals/',
+        blank=True,
+        null=True
+    )
+
     rejection_reason = models.TextField(blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)

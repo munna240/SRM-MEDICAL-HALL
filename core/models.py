@@ -252,3 +252,34 @@ class PrescriptionVersion(models.Model):
 
     def __str__(self):
         return f"{self.prescription_id_snapshot} - {self.action}"
+
+# =====================================
+# PHARMACY WEBSITE SETTINGS
+# =====================================
+
+class PharmacySettings(models.Model):
+
+    pharmacy_name = models.CharField(
+        max_length=200,
+        default="SRM MEDICAL HALL"
+    )
+
+    logo = models.ImageField(
+        upload_to="pharmacy/",
+        blank=True,
+        null=True
+    )
+
+    address = models.TextField(blank=True)
+
+    phone = models.CharField(
+        max_length=30,
+        blank=True
+    )
+
+    email = models.EmailField(blank=True)
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.pharmacy_name

@@ -4,198 +4,1193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SRM MEDICAL HALL | Pharmacy Management</title>
+    <meta name="theme-color" content="#073b36">
+
+    <title>{% if pharmacy %}{{ pharmacy.pharmacy_name }}{% else %}SRM MEDICAL HALL{% endif %} | Smart Pharmacy</title>
 
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: "Segoe UI", Arial, sans-serif;
         }
+
+        html { scroll-behavior: smooth; }
 
         body {
-            background: #f4f7fb;
+            background: #f7fafc;
             color: #243247;
+            overflow-x: hidden;
         }
+
+        a { text-decoration: none; }
+
+        :root {
+            --green: #073b36;
+            --teal: #0b766e;
+            --emerald: #10a37f;
+            --blue: #2563eb;
+            --purple: #8b5cf6;
+            --gold: #d6a84f;
+            --light: #f0faf7;
+            --text: #243247;
+        }
+
+        .container {
+            width: min(1160px, 90%);
+            margin: auto;
+        }
+
+        /* HEADER */
 
         header {
-            background: #073b36;
-            color: white;
-            padding: 22px 7%;
+            background: rgba(255,255,255,.96);
+            border-bottom: 1px solid #e8efed;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 3px 20px rgba(0,0,0,.04);
+        }
+
+        .navbar {
+            min-height: 78px;
             display: flex;
+            align-items: center;
             justify-content: space-between;
+            gap: 20px;
+        }
+
+       .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.logo {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--green), var(--emerald));
+    display: grid;
+    place-items: center;
+    color: white;
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.logo-image {
+    width: 62px;
+    height: 62px;
+    border-radius: 10px;
+    object-fit: contain;
+    object-position: center;
+    background: #000000;
+    padding: 3px;
+    display: block;
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+.brand h1 {
+    font-size: 19px;
+    color: var(--green);
+    letter-spacing: .5px;
+    line-height: 1.25;
+    margin: 0;
+}
+
+.brand p {
+    font-size: 10px;
+    color: #78918c;
+    letter-spacing: 1.4px;
+    margin: 4px 0 0;
+    line-height: 1.3;
+}
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 27px;
+        }
+
+        .nav-links a {
+            color: #52635f;
+            font-size: 14px;
+            font-weight: 600;
+            transition: .2s;
+        }
+
+        .nav-links a:hover { color: var(--emerald); }
+
+        .nav-actions {
+            display: flex;
+            gap: 10px;
             align-items: center;
         }
 
-        .brand h1 {
+        .btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px 21px;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 700;
+            transition: .25s;
+            cursor: pointer;
+        }
+
+        .btn-outline {
+            border: 1px solid #0b766e;
+            color: var(--teal);
+            background: white;
+        }
+
+        .btn-primary {
+            color: white;
+            background: linear-gradient(135deg, var(--green), var(--teal));
+            box-shadow: 0 7px 18px rgba(11,118,110,.18);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 9px 20px rgba(0,0,0,.12);
+        }
+
+        .menu-toggle {
+            display: none;
+            border: 0;
+            background: var(--light);
+            color: var(--green);
             font-size: 25px;
-            letter-spacing: 1px;
+            padding: 7px 12px;
+            border-radius: 8px;
+            cursor: pointer;
         }
 
-        .brand p {
-            color: #b8ded5;
-            font-size: 12px;
-            margin-top: 5px;
-        }
-
-        .status {
-            background: #145c50;
-            padding: 9px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-        }
+        /* HERO */
 
         .hero {
-            min-height: 430px;
-            padding: 85px 7%;
-            background: linear-gradient(120deg, #e4f3ef, #f4f7fb);
-            display: flex;
+            position: relative;
+            padding: 90px 0 85px;
+            background:
+                radial-gradient(circle at 85% 20%, #d9eaff 0, transparent 28%),
+                radial-gradient(circle at 10% 90%, #d6f5e8 0, transparent 30%),
+                linear-gradient(120deg, #f2fbf8, #f7f9ff);
+            overflow: hidden;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.1fr .9fr;
             align-items: center;
+            gap: 45px;
         }
 
-        .hero-content {
-            max-width: 650px;
-        }
-
-        .tag {
+        .eyebrow {
+            display: inline-block;
+            background: #dff6ed;
             color: #087c69;
-            font-weight: bold;
-            font-size: 13px;
-            letter-spacing: 2px;
+            padding: 9px 15px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        .system-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            background: #e9f9ef;
+            color: #16834b;
+            border: 1px solid #c8efd6;
+            padding: 9px 15px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 18px;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            background: #19b765;
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px rgba(25,183,101,.13);
         }
 
         .hero h2 {
-            font-size: 48px;
-            line-height: 1.2;
-            margin: 18px 0;
-            color: #073b36;
+            font-size: clamp(38px, 5vw, 59px);
+            line-height: 1.13;
+            color: var(--green);
+            margin: 23px 0 20px;
+            letter-spacing: -1.5px;
         }
 
-        .hero p {
+        .hero h2 span {
+            background: linear-gradient(90deg, #0b766e, #2563eb, #8b5cf6);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .hero-text {
             color: #657487;
             font-size: 16px;
-            line-height: 1.8;
+            line-height: 1.9;
+            max-width: 570px;
         }
 
-        .features {
-            padding: 55px 7%;
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 13px;
+            margin-top: 30px;
         }
 
-        .features h2 {
+        .hero-note {
+            margin-top: 25px;
+            color: #718096;
+            font-size: 13px;
+        }
+
+        .hero-art {
+            min-height: 350px;
+            display: grid;
+            place-items: center;
+            position: relative;
+        }
+
+        .medical-card {
+            width: min(100%, 390px);
+            padding: 32px;
+            background: rgba(255,255,255,.88);
+            border: 1px solid white;
+            border-radius: 28px;
+            box-shadow: 0 25px 65px rgba(7,59,54,.12);
+            position: relative;
+            z-index: 2;
+        }
+
+        .medical-icon {
+            width: 85px;
+            height: 85px;
+            margin: auto;
+            border-radius: 25px;
+            display: grid;
+            place-items: center;
+            font-size: 43px;
+            color: white;
+            background: linear-gradient(135deg, #087c69, #10a37f);
+            box-shadow: 0 12px 25px rgba(16,163,127,.25);
+        }
+
+        .medical-card h3 {
             text-align: center;
-            color: #073b36;
-            margin-bottom: 30px;
-            font-size: 28px;
+            color: var(--green);
+            margin-top: 23px;
+            font-size: 22px;
         }
+
+        .medical-card > p {
+            text-align: center;
+            color: #84918f;
+            margin-top: 8px;
+            font-size: 13px;
+        }
+
+        .mini-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 27px;
+        }
+
+        .mini {
+            background: #f2faf7;
+            padding: 14px 10px;
+            border-radius: 12px;
+            text-align: center;
+            color: #087c69;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .mini:nth-child(2) { background: #eff4ff; color: #2563eb; }
+        .mini:nth-child(3) { background: #f4efff; color: #8b5cf6; }
+        .mini:nth-child(4) { background: #fff8e8; color: #a77a20; }
+
+        /* TRUST STRIP */
+
+        .trust-strip {
+            padding: 23px 0;
+            background: white;
+            border-bottom: 1px solid #edf1f2;
+        }
+
+        .trust-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            text-align: center;
+        }
+
+        .trust-item {
+            color: #52635f;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .trust-item span {
+            display: block;
+            color: var(--emerald);
+            font-size: 21px;
+            margin-bottom: 6px;
+        }
+
+        /* SECTIONS */
+
+        section.content-section { padding: 85px 0; }
+
+        .section-heading {
+            text-align: center;
+            max-width: 650px;
+            margin: 0 auto 42px;
+        }
+
+        .section-heading small {
+            color: var(--emerald);
+            font-weight: 800;
+            letter-spacing: 2px;
+            font-size: 11px;
+        }
+
+        .section-heading h2 {
+            color: var(--green);
+            font-size: 34px;
+            margin: 12px 0;
+        }
+
+        .section-heading p {
+            color: #7a8997;
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+        /* MANAGEMENT MODULES */
 
         .cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 22px;
         }
 
         .card {
             background: white;
-            padding: 28px;
-            border-radius: 12px;
-            border: 1px solid #e4eaf0;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.04);
+            border: 1px solid #e9eeee;
+            padding: 29px 25px;
+            border-radius: 17px;
+            transition: .3s;
+            box-shadow: 0 6px 25px rgba(0,0,0,.025);
         }
 
+        .card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 15px 35px rgba(7,59,54,.09);
+        }
+
+        .card-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 15px;
+            display: grid;
+            place-items: center;
+            font-size: 26px;
+            background: #e5f7f0;
+            margin-bottom: 20px;
+        }
+
+        .card:nth-child(2) .card-icon { background: #eaf0ff; }
+        .card:nth-child(3) .card-icon { background: #f2eaff; }
+        .card:nth-child(4) .card-icon { background: #fff4df; }
+        .card:nth-child(5) .card-icon { background: #e8f5ff; }
+
         .card h3 {
-            color: #087c69;
-            margin-bottom: 12px;
+            color: var(--green);
+            font-size: 18px;
+            margin-bottom: 11px;
         }
 
         .card p {
-            color: #718096;
-            font-size: 14px;
-            line-height: 1.7;
+            color: #7b8996;
+            font-size: 13px;
+            line-height: 1.8;
         }
+
+        /* ACCESS */
+
+        .access-section {
+            background: linear-gradient(120deg, #073b36, #0b766e);
+            padding: 75px 0;
+        }
+
+        .access-section .section-heading h2 { color: white; }
+        .access-section .section-heading p { color: #d0e5df; }
+        .access-section .section-heading small { color: #a8e7d1; }
+
+        .access-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .access-card {
+            background: white;
+            border-radius: 17px;
+            padding: 28px;
+            text-align: center;
+        }
+
+        .access-card .symbol {
+            font-size: 34px;
+            margin-bottom: 15px;
+        }
+
+        .access-card h3 {
+            color: var(--green);
+            margin-bottom: 9px;
+        }
+
+        .access-card p {
+            color: #81908d;
+            font-size: 13px;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .access-card .btn { width: 100%; }
+
+        /* ABOUT */
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 55px;
+        }
+
+        .about-panel {
+            background: linear-gradient(135deg, #e0f7ef, #e9edff);
+            min-height: 280px;
+            border-radius: 25px;
+            display: grid;
+            place-items: center;
+            font-size: 95px;
+        }
+
+        .about-text h2 {
+            font-size: 32px;
+            color: var(--green);
+            margin: 14px 0;
+        }
+
+        .about-text p {
+            color: #718096;
+            line-height: 1.9;
+            font-size: 14px;
+        }
+
+        /* FOOTER */
 
         footer {
-            background: #073b36;
-            color: #c5d8d4;
-            text-align: center;
-            padding: 22px;
-            font-size: 13px;
+            background: #062f2c;
+            color: #c9dcd7;
+            padding: 55px 0 22px;
         }
 
-        @media (max-width: 600px) {
-            .hero h2 {
-                font-size: 34px;
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr;
+            gap: 35px;
+            margin-bottom: 35px;
+        }
+
+        footer h3 {
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        footer p, footer a {
+            color: #b5cbc5;
+            font-size: 13px;
+            line-height: 2;
+        }
+
+        footer a:hover { color: #62dbb4; }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .footer-contact {
+            margin-top: 12px;
+        }
+
+        .footer-contact p {
+            overflow-wrap: anywhere;
+        }
+
+        .copyright {
+            border-top: 1px solid #24534d;
+            padding-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #91b2a9;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 900px) {
+            .nav-links { gap: 14px; }
+            .cards { grid-template-columns: repeat(2, 1fr); }
+            .hero-grid { gap: 20px; }
+        }
+
+        @media (max-width: 700px) {
+            .navbar { min-height: 70px; }
+            .menu-toggle { display: block; }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: white;
+                padding: 22px 5%;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0;
+                box-shadow: 0 12px 20px rgba(0,0,0,.08);
             }
 
-            header {
-                flex-direction: column;
-                gap: 12px;
+            .nav-links.open { display: flex; }
+
+            .nav-links a {
+                padding: 13px 5px;
+                border-bottom: 1px solid #edf1f2;
+            }
+
+            .nav-actions { display: none; }
+
+            .brand h1 { font-size: 16px; }
+            .brand p { font-size: 8px; letter-spacing: 1px; }
+            .logo-image { width: 48px; height: 48px; }
+
+            .hero { padding: 60px 0; }
+
+            .hero-grid {
+                grid-template-columns: 1fr;
                 text-align: center;
             }
+
+            .hero-text { margin: auto; }
+            .hero-buttons { justify-content: center; }
+            .hero-art { min-height: 300px; }
+            .medical-card { padding: 25px; }
+
+            .trust-grid { grid-template-columns: 1fr; gap: 18px; }
+
+            section.content-section { padding: 60px 0; }
+
+            .section-heading h2 { font-size: 28px; }
+
+            .cards { grid-template-columns: 1fr; }
+
+            .access-grid { grid-template-columns: 1fr; }
+
+            .about-grid { grid-template-columns: 1fr; gap: 30px; }
+
+            .about-panel { min-height: 210px; font-size: 75px; }
+
+            .about-text h2 { font-size: 27px; }
+
+            .footer-grid { grid-template-columns: 1fr; gap: 25px; }
+
+            .btn { padding: 13px 17px; }
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+
+            *, *::before, *::after {
+                transition-duration: .01ms !important;
+                animation-duration: .01ms !important;
+            }
+        }
+        .navbar {
+    align-items: center;
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+.logo-image {
+    width: 62px;
+    height: 62px;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    flex-shrink: 0;
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    mix-blend-mode: normal;
+}
     </style>
 </head>
 
 <body>
 
-    <header>
-        <div class="brand">
-            <h1>SRM MEDICAL HALL</h1>
-            <p>SMART PHARMACY MANAGEMENT SYSTEM</p>
+<header>
+    <div class="container navbar">
+
+        <a href="{% url 'home' %}" class="brand">
+
+            {% if pharmacy and pharmacy.logo %}
+                <img
+                    src="{{ pharmacy.logo.url }}"
+                    alt="{{ pharmacy.pharmacy_name }} Logo"
+                    class="logo-image"
+                >
+            {% else %}
+                <div class="logo">S</div>
+            {% endif %}
+
+            <div>
+                <h1>
+                    {% if pharmacy %}
+                        {{ pharmacy.pharmacy_name }}
+                    {% else %}
+                        SRM MEDICAL HALL
+                    {% endif %}
+                </h1>
+
+                <p>SMART PHARMACY MANAGEMENT SYSTEM</p>
+            </div>
+
+        </a>
+
+        <button
+            class="menu-toggle"
+            id="menuToggle"
+            aria-label="Open navigation menu"
+            aria-expanded="false"
+            aria-controls="navLinks"
+        >☰</button>
+
+        <nav class="nav-links" id="navLinks">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="#about">About</a>
+            <a href="#services">Modules</a>
+            <a href="#access">Registration</a>
+            <a href="#contact">Contact</a>
+            <a href="{% url 'login' %}">Login</a>
+        </nav>
+
+        <div class="nav-actions">
+            <a href="{% url 'login' %}" class="btn btn-outline">Login</a>
+
+            <a href="{% url 'doctor_register' %}" class="btn btn-primary">
+                Join as Doctor
+            </a>
         </div>
 
-        <div class="status">● SYSTEM ONLINE</div>
-    </header>
+    </div>
+</header>
+
+<main>
+
+    <!-- HERO SECTION -->
 
     <section class="hero">
-        <div class="hero-content">
-            <div class="tag">DIGITAL PHARMACY PLATFORM</div>
+        <div class="container hero-grid">
 
-            <h2>Smarter Pharmacy.<br>Better Healthcare.</h2>
+            <div>
 
-            <p>
-                A modern pharmacy management platform for digital
-                prescriptions, medicine inventory, patient records,
-                billing and intelligent pharmacy operations.
-            </p>
+                <div class="system-status">
+                    <span class="status-dot"></span>
+                    SYSTEM ONLINE
+                </div>
+
+                <br>
+
+                <span class="eyebrow">✦ DIGITAL PHARMACY PLATFORM</span>
+
+                <h2>
+                    Smarter Pharmacy.<br>
+                    <span>Better Healthcare.</span>
+                </h2>
+
+                <p class="hero-text">
+                    A modern pharmacy management platform for digital
+                    prescriptions, medicine inventory, patient records,
+                    billing and intelligent pharmacy operations.
+                </p>
+
+                <div class="hero-buttons">
+
+                    <a href="{% url 'login' %}" class="btn btn-primary">
+                        Access Your Portal →
+                    </a>
+
+                    <a href="#access" class="btn btn-outline">
+                        Create an Account
+                    </a>
+
+                </div>
+
+                <p class="hero-note">
+                    ✓ Secure access &nbsp;
+                    ✓ Digital records &nbsp;
+                    ✓ QR prescription verification
+                </p>
+
+            </div>
+
+            <div class="hero-art">
+
+                <div class="medical-card">
+
+                    <div class="medical-icon">✚</div>
+
+                    <h3>Healthcare, Simplified</h3>
+
+                    <p>
+                        One platform. Smarter pharmacy operations.
+                    </p>
+
+                    <div class="mini-features">
+                        <div class="mini">▣ Digital Prescription</div>
+                        <div class="mini">✚ Patient Records</div>
+                        <div class="mini">◇ QR Verification</div>
+                        <div class="mini">▤ Pharmacy Access</div>
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
     </section>
 
-    <section class="features">
-        <h2>Our Management Modules</h2>
+    <!-- TRUST STRIP -->
 
-        <div class="cards">
+    <div class="trust-strip">
+        <div class="container trust-grid">
 
-            <div class="card">
-                <h3>Digital Prescription</h3>
-                <p>Create and manage professional digital prescriptions
-                with doctor information and QR verification.</p>
+            <div class="trust-item">
+                <span>✓</span>
+                Organized Digital Records
             </div>
 
-            <div class="card">
-                <h3>Medicine Inventory</h3>
-                <p>Manage medicine stock, batches, expiry dates and
-                low-stock notifications.</p>
+            <div class="trust-item">
+                <span>⌁</span>
+                Convenient Portal Access
             </div>
 
-            <div class="card">
-                <h3>Sales & Billing</h3>
-                <p>Manage medicine sales, invoices, payments and
-                transaction history.</p>
-            </div>
-
-            <div class="card">
-                <h3>Patient Records</h3>
-                <p>Maintain patient profiles, medical history,
-                allergies and prescription records.</p>
+            <div class="trust-item">
+                <span>▦</span>
+                QR-Based Verification
             </div>
 
         </div>
+    </div>
+
+    <!-- MANAGEMENT MODULES -->
+
+    <section class="content-section" id="services">
+
+        <div class="container">
+
+            <div class="section-heading">
+
+                <small>OUR MANAGEMENT MODULES</small>
+
+                <h2>Our Management Modules</h2>
+
+                <p>
+                    A connected digital platform designed to organize
+                    prescriptions, medicine inventory, sales, patient
+                    records and pharmacy operations.
+                </p>
+
+            </div>
+
+            <div class="cards">
+
+                <!-- MODULE 1 -->
+
+                <div class="card">
+
+                    <div class="card-icon">▤</div>
+
+                    <h3>Digital Prescription</h3>
+
+                    <p>
+                        Create and manage professional digital prescriptions
+                        with doctor information and QR verification.
+                    </p>
+
+                </div>
+
+                <!-- MODULE 2 -->
+
+                <div class="card">
+
+                    <div class="card-icon">✚</div>
+
+                    <h3>Medicine Inventory</h3>
+
+                    <p>
+                        Manage medicine stock, batches, expiry dates
+                        and low-stock notifications.
+                    </p>
+
+                </div>
+
+                <!-- MODULE 3 -->
+
+                <div class="card">
+
+                    <div class="card-icon">৳</div>
+
+                    <h3>Sales & Billing</h3>
+
+                    <p>
+                        Manage medicine sales, invoices, payments
+                        and transaction history.
+                    </p>
+
+                </div>
+
+                <!-- MODULE 4 -->
+
+                <div class="card">
+
+                    <div class="card-icon">♙</div>
+
+                    <h3>Patient Records</h3>
+
+                    <p>
+                        Maintain patient profiles, medical history,
+                        allergies and prescription records.
+                    </p>
+
+                </div>
+
+                <!-- MODULE 5 -->
+
+                <div class="card">
+
+                    <div class="card-icon">▦</div>
+
+                    <h3>QR Verification</h3>
+
+                    <p>
+                        Verify finalized prescriptions through
+                        a convenient public QR verification page.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </section>
 
-    <footer>
-        © 2026 SRM MEDICAL HALL. All Rights Reserved.
-    </footer>
+    <!-- REGISTRATION AND ACCESS -->
+
+    <section class="access-section" id="access">
+
+        <div class="container">
+
+            <div class="section-heading">
+
+                <small>GET STARTED</small>
+
+                <h2>Choose Your Access</h2>
+
+                <p>
+                    Select the portal that matches your role.
+                    Doctor and Staff registrations are subject to
+                    administrative approval.
+                </p>
+
+            </div>
+
+            <div class="access-grid">
+
+                <!-- DOCTOR -->
+
+                <div class="access-card">
+
+                    <div class="symbol">🩺</div>
+
+                    <h3>Doctor Portal</h3>
+
+                    <p>
+                        Register as a doctor, manage your profile
+                        and access your prescription workspace.
+                    </p>
+
+                    <a
+                        href="{% url 'doctor_register' %}"
+                        class="btn btn-primary"
+                    >
+                        Doctor Registration
+                    </a>
+
+                </div>
+
+                <!-- STAFF -->
+
+                <div class="access-card">
+
+                    <div class="symbol">👨‍💼</div>
+
+                    <h3>Staff Portal</h3>
+
+                    <p>
+                        Apply for staff access and use the pharmacy
+                        management workspace after approval.
+                    </p>
+
+                    <a
+                        href="{% url 'staff_register' %}"
+                        class="btn btn-primary"
+                    >
+                        Staff Registration
+                    </a>
+
+                </div>
+
+                <!-- ADMIN -->
+
+                <div class="access-card">
+
+                    <div class="symbol">🔐</div>
+
+                    <h3>Admin Portal</h3>
+
+                    <p>
+                        Authorized administrators can sign in
+                        to manage the platform and approvals.
+                    </p>
+
+                    <a
+                        href="{% url 'login' %}"
+                        class="btn btn-outline"
+                    >
+                        Admin Login
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ABOUT -->
+
+    <section class="content-section" id="about">
+
+        <div class="container about-grid">
+
+            <div class="about-panel">🏥</div>
+
+            <div class="about-text">
+
+                <span class="eyebrow">ABOUT SRM MEDICAL HALL</span>
+
+                <h2>
+                    A Better Digital Experience for Pharmacy Management
+                </h2>
+
+                <p>
+                    SRM MEDICAL HALL brings important pharmacy workflows
+                    together in one organized platform. From digital
+                    prescriptions to patient information and verification,
+                    our goal is to make everyday operations simpler.
+                </p>
+
+                <br>
+
+                <a href="{% url 'login' %}" class="btn btn-primary">
+                    Explore Your Portal →
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+<!-- FOOTER -->
+
+<footer id="contact">
+
+    <div class="container">
+
+        <div class="footer-grid">
+
+            <!-- PHARMACY INFORMATION -->
+
+            <div>
+
+                <h3>
+                    {% if pharmacy %}
+                        {{ pharmacy.pharmacy_name }}
+                    {% else %}
+                        SRM MEDICAL HALL
+                    {% endif %}
+                </h3>
+
+                <p>
+                    A smarter digital platform for organized pharmacy
+                    management and a better healthcare experience.
+                </p>
+
+                <div class="footer-contact">
+
+                    {% if pharmacy %}
+
+                        {% if pharmacy.address %}
+                            <p>
+                                📍 {{ pharmacy.address|linebreaksbr }}
+                            </p>
+                        {% endif %}
+
+                        {% if pharmacy.phone %}
+                            <p>
+                                ☎ Phone: {{ pharmacy.phone }}
+                            </p>
+                        {% endif %}
+
+                        {% if pharmacy.email %}
+                            <p>
+                                ✉ Email: {{ pharmacy.email }}
+                            </p>
+                        {% endif %}
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            <!-- QUICK LINKS -->
+
+            <div>
+
+                <h3>Quick Links</h3>
+
+                <div class="footer-links">
+
+                    <a href="{% url 'home' %}">Home</a>
+
+                    <a href="#about">About Us</a>
+
+                    <a href="#services">Management Modules</a>
+
+                    <a href="#access">Registration</a>
+
+                </div>
+
+            </div>
+
+            <!-- ACCOUNT LINKS -->
+
+            <div>
+
+                <h3>Account</h3>
+
+                <div class="footer-links">
+
+                    <a href="{% url 'login' %}">Login</a>
+
+                    <a href="{% url 'doctor_register' %}">
+                        Doctor Registration
+                    </a>
+
+                    <a href="{% url 'staff_register' %}">
+                        Staff Registration
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="copyright">
+
+            © {% now "Y" %}
+
+            {% if pharmacy %}
+                {{ pharmacy.pharmacy_name }}
+            {% else %}
+                SRM MEDICAL HALL
+            {% endif %}
+
+            . All Rights Reserved.
+
+        </div>
+
+    </div>
+
+</footer>
+
+<!-- MOBILE NAVIGATION -->
+
+<script>
+
+    const menuToggle = document.getElementById("menuToggle");
+    const navLinks = document.getElementById("navLinks");
+
+    menuToggle.addEventListener("click", function () {
+
+        const isOpen = navLinks.classList.toggle("open");
+
+        menuToggle.setAttribute("aria-expanded", isOpen);
+
+        menuToggle.textContent = isOpen ? "✕" : "☰";
+
+    });
+
+    navLinks.querySelectorAll("a").forEach(function (link) {
+
+        link.addEventListener("click", function () {
+
+            navLinks.classList.remove("open");
+
+            menuToggle.setAttribute("aria-expanded", "false");
+
+            menuToggle.textContent = "☰";
+
+        });
+
+    });
+
+</script>
 
 </body>
 </html>

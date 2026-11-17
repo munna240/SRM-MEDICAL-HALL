@@ -1,6 +1,11 @@
 
 from django.contrib import admin
-from .models import Patient, Prescription, PrescriptionMedicine
+from .models import (
+    Patient,
+    Prescription,
+    PrescriptionMedicine,
+    PharmacySettings,
+)
 
 
 @admin.register(Patient)
@@ -88,3 +93,20 @@ class PrescriptionMedicineAdmin(admin.ModelAdmin):
         'medicine_name',
         'prescription__prescription_id',
     )
+
+
+@admin.register(PharmacySettings)
+class PharmacySettingsAdmin(admin.ModelAdmin):
+
+    list_display = (
+        'pharmacy_name',
+        'phone',
+        'email',
+        'updated_at',
+    )
+
+    def has_add_permission(self, request):
+        return not PharmacySettings.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        return False

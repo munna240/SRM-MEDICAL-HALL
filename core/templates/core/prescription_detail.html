@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prescription Details | SRM MEDICAL HALL</title>
+    <title>{% if pharmacy %}{{ pharmacy.pharmacy_name }}{% else %}SRM MEDICAL HALL{% endif %} | Prescription Details</title>
 
     <style>
         * {
@@ -18,7 +18,6 @@
             color: #1e293b;
         }
 
-        /* SIDEBAR */
         .sidebar {
             width: 250px;
             height: 100vh;
@@ -58,7 +57,6 @@
             color: white;
         }
 
-        /* MAIN CONTENT */
         .main {
             margin-left: 250px;
             min-height: 100vh;
@@ -74,11 +72,34 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.06);
         }
 
+        /* PHARMACY HEADER */
+
         .header {
             text-align: center;
             border-bottom: 3px solid #0f766e;
             padding-bottom: 22px;
             margin-bottom: 25px;
+        }
+
+        .pharmacy-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            margin-bottom: 12px;
+        }
+
+        .pharmacy-logo {
+            width: 82px;
+            height: 82px;
+            object-fit: contain;
+            object-position: center;
+            flex-shrink: 0;
+            display: block;
+        }
+
+        .pharmacy-brand-text {
+            text-align: left;
         }
 
         .header h1 {
@@ -92,6 +113,7 @@
             color: #64748b;
             margin: 5px 0;
             font-size: 13px;
+            overflow-wrap: anywhere;
         }
 
         .title-row {
@@ -208,6 +230,7 @@
         }
 
         /* QR VERIFICATION */
+
         .qr-section {
             margin: 30px auto;
             padding: 22px;
@@ -248,6 +271,8 @@
             font-weight: bold;
         }
 
+        /* DOCTOR */
+
         .doctor-section {
             display: flex;
             justify-content: flex-end;
@@ -282,6 +307,7 @@
         }
 
         /* ACTION BUTTONS */
+
         .actions {
             display: flex;
             gap: 12px;
@@ -347,6 +373,7 @@
         }
 
         /* MOBILE */
+
         @media(max-width: 700px) {
             .sidebar {
                 width: 190px;
@@ -379,6 +406,15 @@
                 padding: 10px 12px;
                 font-size: 12px;
             }
+
+            .pharmacy-logo {
+                width: 62px;
+                height: 62px;
+            }
+
+            .header h1 {
+                font-size: 23px;
+            }
         }
 
         @media(max-width: 480px) {
@@ -406,15 +442,25 @@
             }
 
             .header h1 {
-                font-size: 22px;
+                font-size: 20px;
             }
 
             .title-row h2 {
                 font-size: 18px;
             }
+
+            .pharmacy-brand {
+                gap: 10px;
+            }
+
+            .pharmacy-logo {
+                width: 48px;
+                height: 48px;
+            }
         }
 
         /* PRINT */
+
         @media print {
             @page {
                 size: A4;
@@ -473,6 +519,11 @@
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
+
+            .pharmacy-logo {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
         }
     </style>
 </head>
@@ -480,9 +531,17 @@
 <body>
 
     <!-- SIDEBAR -->
+
     <aside class="sidebar">
 
-        <h2>SRM MEDICAL HALL</h2>
+        <h2>
+            {% if pharmacy %}
+                {{ pharmacy.pharmacy_name }}
+            {% else %}
+                SRM MEDICAL HALL
+            {% endif %}
+        </h2>
+
         <p>Pharmacy Management System</p>
 
         <a href="{% url 'dashboard' %}">Dashboard</a>
@@ -519,28 +578,73 @@
     </aside>
 
     <!-- MAIN CONTENT -->
+
     <div class="main">
 
         <div class="container">
 
-            <!-- PHARMACY HEADER -->
+            <!-- DYNAMIC PHARMACY HEADER -->
+
             <header class="header">
-                <h1>SRM MEDICAL HALL</h1>
-                <p>Pharmacy Management System</p>
+
+                <div class="pharmacy-brand">
+
+                    {% if pharmacy and pharmacy.logo %}
+                        <img
+                            src="{{ pharmacy.logo.url }}"
+                            alt="{{ pharmacy.pharmacy_name }} Logo"
+                            class="pharmacy-logo"
+                        >
+                    {% endif %}
+
+                    <div class="pharmacy-brand-text">
+
+                        <h1>
+                            {% if pharmacy %}
+                                {{ pharmacy.pharmacy_name }}
+                            {% else %}
+                                SRM MEDICAL HALL
+                            {% endif %}
+                        </h1>
+
+                        <p>Pharmacy Management System</p>
+
+                    </div>
+
+                </div>
+
+                {% if pharmacy and pharmacy.address %}
+                    <p>{{ pharmacy.address }}</p>
+                {% endif %}
+
+                {% if pharmacy and pharmacy.phone %}
+                    <p>Phone: {{ pharmacy.phone }}</p>
+                {% endif %}
+
+                {% if pharmacy and pharmacy.email %}
+                    <p>Email: {{ pharmacy.email }}</p>
+                {% endif %}
+
                 <p>Digital Doctor Prescription</p>
+
             </header>
 
             <!-- TITLE AND STATUS -->
+
             <div class="title-row">
+
                 <h2>Prescription Details</h2>
 
                 <span class="status {% if prescription.status == 'FINALIZED' %}finalized{% endif %}">
                     {{ prescription.get_status_display|upper }}
                 </span>
+
             </div>
 
             <!-- PRESCRIPTION INFORMATION -->
+
             <section class="section">
+
                 <h3>Prescription Information</h3>
 
                 <div class="info-grid">
@@ -566,10 +670,13 @@
                     </div>
 
                 </div>
+
             </section>
 
             <!-- PATIENT INFORMATION -->
+
             <section class="section">
+
                 <h3>Patient Information</h3>
 
                 <div class="info-grid">
@@ -595,10 +702,13 @@
                     </div>
 
                 </div>
+
             </section>
 
             <!-- CLINICAL INFORMATION -->
+
             <section class="section">
+
                 <h3>Clinical Information</h3>
 
                 <div class="clinical-box">
@@ -620,13 +730,17 @@
                     <strong>Adv (Advice)</strong>
                     <p>{{ prescription.advice|default:"Not provided" }}</p>
                 </div>
+
             </section>
 
             <!-- PRESCRIBED MEDICINES -->
+
             <section class="section">
+
                 <h3>Prescribed Medicines</h3>
 
                 <table class="medicine-table">
+
                     <thead>
                         <tr>
                             <th>SL</th>
@@ -639,7 +753,9 @@
                     </thead>
 
                     <tbody>
+
                         {% for medicine in prescription.medicines.all %}
+
                         <tr>
                             <td>{{ forloop.counter }}</td>
                             <td>{{ medicine.medicine_name }}</td>
@@ -648,19 +764,27 @@
                             <td>{{ medicine.duration }}</td>
                             <td>{{ medicine.instructions|default:"-" }}</td>
                         </tr>
+
                         {% empty %}
+
                         <tr>
                             <td colspan="6" class="empty">
                                 No medicines added.
                             </td>
                         </tr>
+
                         {% endfor %}
+
                     </tbody>
+
                 </table>
+
             </section>
 
             <!-- QR CODE VERIFICATION -->
+
             {% if qr_code_data %}
+
             <section class="qr-section">
 
                 <h3>Prescription Verification</h3>
@@ -680,44 +804,83 @@
                 </p>
 
                 <p class="qr-note">
-                    SRM MEDICAL HALL
+                    {% if pharmacy %}
+                        {{ pharmacy.pharmacy_name }}
+                    {% else %}
+                        SRM MEDICAL HALL
+                    {% endif %}
                 </p>
 
             </section>
+
             {% endif %}
 
             <!-- DOCTOR INFORMATION -->
-            <section class="doctor-section">
-                <div class="doctor-info">
 
-                    <strong>
-                        Dr. {{ prescription.doctor.get_full_name|default:prescription.doctor.username }}
-                    </strong>
+<!-- DOCTOR INFORMATION -->
 
-                    {% if prescription.doctor.profile.qualification %}
-                        <p>{{ prescription.doctor.profile.qualification }}</p>
-                    {% endif %}
+<section class="doctor-section">
 
-                    {% if prescription.doctor.profile.specialization %}
-                        <p>{{ prescription.doctor.profile.specialization }}</p>
-                    {% endif %}
+    <div class="doctor-info">
 
-                    {% if prescription.doctor.profile.bmdc_number %}
-                        <p>BMDC No: {{ prescription.doctor.profile.bmdc_number }}</p>
-                    {% endif %}
+        {% if prescription.doctor.profile.signature %}
+            <img
+                src="{{ prescription.doctor.profile.signature.url }}"
+                alt="Doctor Signature"
+                class="doctor-signature"
+            >
+        {% endif %}
 
-                    <p>Prescribing Doctor</p>
+        {% if prescription.doctor.profile.seal %}
+            <img
+                src="{{ prescription.doctor.profile.seal.url }}"
+                alt="Doctor Seal"
+                class="doctor-seal"
+            >
+        {% endif %}
 
-                </div>
-            </section>
+        <strong>
+            Dr. {{ prescription.doctor.get_full_name|default:prescription.doctor.username }}
+        </strong>
+
+        {% if prescription.doctor.profile.qualification %}
+            <p>{{ prescription.doctor.profile.qualification }}</p>
+        {% endif %}
+
+        {% if prescription.doctor.profile.specialization %}
+            <p>{{ prescription.doctor.profile.specialization }}</p>
+        {% endif %}
+
+        {% if prescription.doctor.profile.bmdc_number %}
+            <p>BMDC No: {{ prescription.doctor.profile.bmdc_number }}</p>
+        {% endif %}
+
+        <p>Prescribing Doctor</p>
+
+    </div>
+
+</section>
+
 
             <!-- FOOTER -->
+
             <div class="footer">
-                <p>SRM MEDICAL HALL | Digital Prescription System</p>
+
+                <p>
+                    {% if pharmacy %}
+                        {{ pharmacy.pharmacy_name }}
+                    {% else %}
+                        SRM MEDICAL HALL
+                    {% endif %}
+                    | Digital Prescription System
+                </p>
+
                 <p>Prescription ID: {{ prescription.prescription_id }}</p>
+
             </div>
 
             <!-- ACTION BUTTONS -->
+
             <div class="actions">
 
                 <a href="javascript:history.back()" class="btn back-btn">
@@ -726,18 +889,24 @@
 
                 {% if request.user.is_superuser or request.user.profile.role == 'ADMIN' or request.user.profile.role == 'STAFF' or prescription.doctor_id == request.user.id %}
 
-                    <a href="{% url 'prescription_history' prescription.prescription_id %}"
-                       class="btn history-btn">
+                    <a
+                        href="{% url 'prescription_history' prescription.prescription_id %}"
+                        class="btn history-btn"
+                    >
                         Version History
                     </a>
 
-                    <a href="{% url 'prescription_edit' prescription.prescription_id %}"
-                       class="btn edit-btn">
+                    <a
+                        href="{% url 'prescription_edit' prescription.prescription_id %}"
+                        class="btn edit-btn"
+                    >
                         Edit Prescription
                     </a>
 
-                    <a href="{% url 'prescription_delete' prescription.prescription_id %}"
-                       class="btn delete-btn">
+                    <a
+                        href="{% url 'prescription_delete' prescription.prescription_id %}"
+                        class="btn delete-btn"
+                    >
                         Delete Prescription
                     </a>
 
@@ -745,9 +914,11 @@
 
                 {% if request.user.is_superuser or request.user.profile.role == 'ADMIN' or request.user.profile.role == 'STAFF' %}
 
-                    <button type="button"
-                            onclick="window.print()"
-                            class="btn print-btn">
+                    <button
+                        type="button"
+                        onclick="window.print()"
+                        class="btn print-btn"
+                    >
                         Print Prescription
                     </button>
 
@@ -756,6 +927,7 @@
             </div>
 
         </div>
+
     </div>
 
 </body>
