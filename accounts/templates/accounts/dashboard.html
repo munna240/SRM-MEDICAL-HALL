@@ -117,6 +117,37 @@
             font-size: 20px;
         }
 
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 18px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 23px;
+            border-radius: 12px;
+            border: 1px solid #e9eeef;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.025);
+        }
+
+        .stat-card p {
+            color: #7b8988;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .stat-card h2 {
+            color: #073b36;
+            font-size: 29px;
+        }
+
+        .stat-card .stat-note {
+            margin-top: 8px;
+            font-size: 11px;
+            color: #087c69;
+        }
+
         .cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
@@ -145,6 +176,85 @@
             line-height: 1.6;
         }
 
+        .card-link {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            transition: 0.2s;
+        }
+
+        .card-link:hover .card {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 22px rgba(0,0,0,0.07);
+        }
+
+        .table-box {
+            background: white;
+            border-radius: 12px;
+            padding: 22px;
+            margin-top: 20px;
+            overflow-x: auto;
+            border: 1px solid #e9eeef;
+        }
+
+        .table-box h3 {
+            color: #073b36;
+            margin-bottom: 18px;
+            font-size: 17px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 500px;
+        }
+
+        th, td {
+            padding: 13px 12px;
+            text-align: left;
+            border-bottom: 1px solid #edf1f2;
+            font-size: 13px;
+        }
+
+        th {
+            color: #087c69;
+            background: #f5faf8;
+        }
+
+        td {
+            color: #536461;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .finalized {
+            background: #e1f5e9;
+            color: #16834b;
+        }
+
+        .draft {
+            background: #fff2d9;
+            color: #a66a00;
+        }
+
+        .empty {
+            color: #8b9996;
+            text-align: center;
+            padding: 22px;
+        }
+
+        .view-link {
+            color: #087c69;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
         .logout {
             margin-top: 35px;
             display: inline-block;
@@ -158,18 +268,6 @@
 
         .logout:hover {
             background: #922b2b;
-        }
-
-        .card-link {
-            display: block;
-            text-decoration: none;
-            color: inherit;
-            transition: 0.2s;
-        }
-
-        .card-link:hover .card {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 22px rgba(0,0,0,0.07);
         }
 
         @media (max-width: 768px) {
@@ -188,204 +286,370 @@
                 gap: 12px;
                 flex-wrap: wrap;
             }
+
+            .welcome h1 {
+                font-size: 22px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <aside class="sidebar">
+<aside class="sidebar">
 
-        <div class="brand">
-            <h2>SRM MEDICAL HALL</h2>
-            <p>PHARMACY MANAGEMENT SYSTEM</p>
+    <div class="brand">
+        <h2>SRM MEDICAL HALL</h2>
+        <p>PHARMACY MANAGEMENT SYSTEM</p>
+    </div>
+
+    <nav class="menu">
+
+        <a href="{% url 'dashboard' %}" class="active">Dashboard</a>
+
+        {% if role == 'ADMIN' %}
+
+            <a href="{% url 'patient_list' %}">Patients</a>
+            <a href="{% url 'prescription_list' %}">Prescriptions</a>
+            <a href="#">Medicine Inventory</a>
+            <a href="#">Sales & Billing</a>
+            <a href="#">Purchases & Suppliers</a>
+            <a href="#">Reports & Analytics</a>
+            <a href="/admin/accounts/userprofile/">Registration Approvals</a>
+            <a href="#">Settings</a>
+
+        {% elif role == 'STAFF' %}
+
+            <a href="{% url 'patient_list' %}">Patients</a>
+            <a href="{% url 'prescription_list' %}">Prescriptions</a>
+            <a href="#">Medicine Inventory</a>
+            <a href="#">Sales & Billing</a>
+            <a href="#">Purchases & Suppliers</a>
+
+        {% elif role == 'DOCTOR' %}
+
+            <a href="{% url 'doctor_patients' %}">My Patients</a>
+            <a href="{% url 'prescription_list' %}">Digital Prescriptions</a>
+            <a href="{% url 'doctor_profile' %}">My Profile</a>
+
+        {% endif %}
+
+    </nav>
+
+</aside>
+
+<main class="main">
+
+    <div class="topbar">
+        <div class="role">{{ role }} PORTAL</div>
+    </div>
+
+    <section class="welcome">
+
+        {% if role == 'ADMIN' %}
+
+            <h1>Welcome, Administrator</h1>
+            <p>
+                Manage SRM MEDICAL HALL, monitor pharmacy activities,
+                manage patients, doctors, staff and prescriptions.
+            </p>
+
+        {% elif role == 'STAFF' %}
+
+            <h1>Welcome, Pharmacy Staff</h1>
+            <p>
+                Manage patient information, medicine inventory,
+                pharmacy sales, billing and daily operations
+                according to your assigned permissions.
+            </p>
+
+        {% elif role == 'DOCTOR' %}
+
+            <h1>Welcome, Doctor</h1>
+            <p>
+                Manage your patients, review patient information
+                and create digital prescriptions.
+                Your portal is restricted to clinical activities.
+            </p>
+
+        {% endif %}
+
+    </section>
+
+
+    {% if role == 'ADMIN' %}
+
+    <!-- ADMIN LIVE STATISTICS -->
+
+    <h2 class="section-title">Live System Statistics</h2>
+
+    <section class="stats-grid">
+
+        <div class="stat-card">
+            <p>Total Patients</p>
+            <h2>{{ total_patients|default:0 }}</h2>
+            <div class="stat-note">Active patient records</div>
         </div>
 
-        <nav class="menu">
-
-            <a href="{% url 'dashboard' %}" class="active">Dashboard</a>
-
-            {% if role == 'ADMIN' %}
-
-                <a href="{% url 'patient_list' %}">Patients</a>
-                <a href="{% url 'prescription_list' %}">Prescriptions</a>
-                <a href="#">Medicine Inventory</a>
-                <a href="#">Sales & Billing</a>
-                <a href="#">Purchases & Suppliers</a>
-                <a href="#">Reports & Analytics</a>
-                <a href="/admin/accounts/userprofile/">Registration Approvals</a>
-                <a href="#">Settings</a>
-
-            {% elif role == 'STAFF' %}
-
-                <a href="{% url 'patient_list' %}">Patients</a>
-                <a href="{% url 'prescription_list' %}">Prescriptions</a>
-                <a href="#">Medicine Inventory</a>
-                <a href="#">Sales & Billing</a>
-                <a href="#">Purchases & Suppliers</a>
-
-            {% elif role == 'DOCTOR' %}
-
-                <a href="{% url 'doctor_patients' %}">My Patients</a>
-                <a href="{% url 'prescription_list' %}">Digital Prescriptions</a>
-                <a href="{% url 'doctor_profile' %}">My Profile</a>
-
-            {% endif %}
-
-        </nav>
-
-    </aside>
-
-    <main class="main">
-
-        <div class="topbar">
-            <div class="role">{{ role }} PORTAL</div>
+        <div class="stat-card">
+            <p>Approved Doctors</p>
+            <h2>{{ total_doctors|default:0 }}</h2>
+            <div class="stat-note">Registered doctors</div>
         </div>
 
-        <section class="welcome">
+        <div class="stat-card">
+            <p>Approved Staff</p>
+            <h2>{{ total_staff|default:0 }}</h2>
+            <div class="stat-note">Active staff accounts</div>
+        </div>
 
-            {% if role == 'ADMIN' %}
+        <div class="stat-card">
+            <p>Total Prescriptions</p>
+            <h2>{{ total_prescriptions|default:0 }}</h2>
+            <div class="stat-note">All active prescriptions</div>
+        </div>
 
-                <h1>Welcome, Administrator</h1>
-                <p>
-                    Manage the complete SRM MEDICAL HALL
-                    Pharmacy Management System, including staff,
-                    doctors, inventory, sales and financial reports.
-                </p>
+        <div class="stat-card">
+            <p>Finalized Prescriptions</p>
+            <h2>{{ finalized_prescriptions|default:0 }}</h2>
+            <div class="stat-note">Completed prescriptions</div>
+        </div>
 
-            {% elif role == 'STAFF' %}
+        <div class="stat-card">
+            <p>Draft Prescriptions</p>
+            <h2>{{ draft_prescriptions|default:0 }}</h2>
+            <div class="stat-note">Pending completion</div>
+        </div>
 
-                <h1>Welcome, Pharmacy Staff</h1>
-                <p>
-                    Manage patient information, medicine inventory,
-                    pharmacy sales, billing and daily operations
-                    according to your assigned permissions.
-                </p>
+    </section>
 
-            {% elif role == 'DOCTOR' %}
 
-                <h1>Welcome, Doctor</h1>
-                <p>
-                    Manage your patients, review patient information
-                    and create digital prescriptions.
-                    Your portal is restricted to clinical activities.
-                </p>
+    <!-- PENDING APPROVALS -->
 
-            {% endif %}
+    <h2 class="section-title">Registration Approvals</h2>
 
-        </section>
+    <section class="stats-grid">
 
-        <h2 class="section-title">Your Management Modules</h2>
+        <a href="/admin/accounts/userprofile/?status__exact=PENDING&role__exact=DOCTOR"
+           class="card-link">
+            <div class="stat-card">
+                <p>Pending Doctor Applications</p>
+                <h2>{{ pending_doctors|default:0 }}</h2>
+                <div class="stat-note">Review doctor registrations</div>
+            </div>
+        </a>
 
-        <section class="cards">
+        <a href="/admin/accounts/userprofile/?status__exact=PENDING&role__exact=STAFF"
+           class="card-link">
+            <div class="stat-card">
+                <p>Pending Staff Applications</p>
+                <h2>{{ pending_staff|default:0 }}</h2>
+                <div class="stat-note">Review staff registrations</div>
+            </div>
+        </a>
 
-            {% if role == 'ADMIN' %}
+    </section>
 
-                <a href="{% url 'patient_list' %}" class="card-link">
-                    <div class="card">
-                        <h3>Patient Management</h3>
-                        <p>Manage patient profiles and medical records.</p>
-                    </div>
-                </a>
 
-                <a href="{% url 'prescription_list' %}" class="card-link">
-                    <div class="card">
-                        <h3>Digital Prescriptions</h3>
-                        <p>Review and manage all digital prescriptions.</p>
-                    </div>
-                </a>
+    <!-- RECENT PATIENTS -->
 
+    <h2 class="section-title">Recent Patients</h2>
+
+    <div class="table-box">
+
+        <h3>Recently Registered Patients</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Patient ID</th>
+                    <th>Patient Name</th>
+                    <th>Phone</th>
+                    <th>Registration Date</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for patient in recent_patients %}
+                <tr>
+                    <td>{{ patient.patient_id }}</td>
+                    <td>{{ patient.full_name }}</td>
+                    <td>{{ patient.phone }}</td>
+                    <td>{{ patient.created_at|date:"d M Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="empty">No patient records found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+
+    <!-- RECENT PRESCRIPTIONS -->
+
+    <h2 class="section-title">Recent Prescriptions</h2>
+
+    <div class="table-box">
+
+        <h3>Latest Prescription Records</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Prescription ID</th>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for prescription in recent_prescriptions %}
+                <tr>
+                    <td>{{ prescription.prescription_id }}</td>
+                    <td>{{ prescription.patient.full_name }}</td>
+                    <td>{{ prescription.doctor.username }}</td>
+                    <td>
+                        {% if prescription.status == 'FINALIZED' %}
+                            <span class="status finalized">Finalized</span>
+                        {% else %}
+                            <span class="status draft">Draft</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ prescription.created_at|date:"d M Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="empty">No prescription records found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- MANAGEMENT MODULES -->
+
+    <h2 class="section-title">Your Management Modules</h2>
+
+    <section class="cards">
+
+        {% if role == 'ADMIN' %}
+
+            <a href="{% url 'patient_list' %}" class="card-link">
                 <div class="card">
-                    <h3>Medicine Inventory</h3>
-                    <p>Manage medicine stock, batches and expiry.</p>
+                    <h3>Patient Management</h3>
+                    <p>Manage patient profiles and medical records.</p>
                 </div>
+            </a>
 
+            <a href="{% url 'prescription_list' %}" class="card-link">
                 <div class="card">
-                    <h3>Sales & Billing</h3>
-                    <p>Manage pharmacy sales, payments and invoices.</p>
+                    <h3>Digital Prescriptions</h3>
+                    <p>Review and manage all digital prescriptions.</p>
                 </div>
+            </a>
 
-                <div class="card">
-                    <h3>Purchases & Suppliers</h3>
-                    <p>Manage medicine purchases and suppliers.</p>
-                </div>
+            <div class="card">
+                <h3>Medicine Inventory</h3>
+                <p>Manage medicine stock, batches and expiry.</p>
+            </div>
 
-                <div class="card">
-                    <h3>Reports & Analytics</h3>
-                    <p>Monitor pharmacy performance and financial reports.</p>
-                </div>
+            <div class="card">
+                <h3>Sales & Billing</h3>
+                <p>Manage pharmacy sales, payments and invoices.</p>
+            </div>
 
+            <div class="card">
+                <h3>Purchases & Suppliers</h3>
+                <p>Manage medicine purchases and suppliers.</p>
+            </div>
+
+            <div class="card">
+                <h3>Reports & Analytics</h3>
+                <p>Monitor pharmacy performance and financial reports.</p>
+            </div>
+
+            <a href="/admin/accounts/userprofile/" class="card-link">
                 <div class="card">
                     <h3>Registration Approvals</h3>
                     <p>Approve or reject Staff and Doctor applications.</p>
                 </div>
+            </a>
 
+            <div class="card">
+                <h3>System Settings</h3>
+                <p>Manage pharmacy information and system settings.</p>
+            </div>
+
+        {% elif role == 'STAFF' %}
+
+            <a href="{% url 'patient_list' %}" class="card-link">
                 <div class="card">
-                    <h3>System Settings</h3>
-                    <p>Manage pharmacy information and system settings.</p>
+                    <h3>Patient Management</h3>
+                    <p>Register patients and manage patient information.</p>
                 </div>
+            </a>
 
-            {% elif role == 'STAFF' %}
-
-                <a href="{% url 'patient_list' %}" class="card-link">
-                    <div class="card">
-                        <h3>Patient Management</h3>
-                        <p>Register patients and manage patient information.</p>
-                    </div>
-                </a>
-
-                <a href="{% url 'prescription_list' %}" class="card-link">
-                    <div class="card">
-                        <h3>Prescriptions</h3>
-                        <p>View prescriptions and process authorized dispensing.</p>
-                    </div>
-                </a>
-
+            <a href="{% url 'prescription_list' %}" class="card-link">
                 <div class="card">
-                    <h3>Medicine Inventory</h3>
-                    <p>Manage medicine stock, batches and expiry dates.</p>
+                    <h3>Prescriptions</h3>
+                    <p>View prescriptions and process authorized dispensing.</p>
                 </div>
+            </a>
 
+            <div class="card">
+                <h3>Medicine Inventory</h3>
+                <p>Manage medicine stock, batches and expiry dates.</p>
+            </div>
+
+            <div class="card">
+                <h3>Sales & Billing</h3>
+                <p>Process medicine sales, payments and invoices.</p>
+            </div>
+
+            <div class="card">
+                <h3>Purchases & Suppliers</h3>
+                <p>Manage authorized purchase and supplier operations.</p>
+            </div>
+
+        {% elif role == 'DOCTOR' %}
+
+            <a href="{% url 'doctor_patients' %}" class="card-link">
                 <div class="card">
-                    <h3>Sales & Billing</h3>
-                    <p>Process medicine sales, payments and invoices.</p>
+                    <h3>My Patients</h3>
+                    <p>Access authorized patient information and medical history.</p>
                 </div>
+            </a>
 
+            <a href="{% url 'prescription_list' %}" class="card-link">
                 <div class="card">
-                    <h3>Purchases & Suppliers</h3>
-                    <p>Manage authorized purchase and supplier operations.</p>
+                    <h3>Digital Prescriptions</h3>
+                    <p>View your prescriptions and create new prescriptions.</p>
                 </div>
+            </a>
 
-            {% elif role == 'DOCTOR' %}
+            <a href="{% url 'doctor_profile' %}" class="card-link">
+                <div class="card">
+                    <h3>My Profile</h3>
+                    <p>View and update your professional information and credentials.</p>
+                </div>
+            </a>
 
-                <a href="{% url 'doctor_patients' %}" class="card-link">
-                    <div class="card">
-                        <h3>My Patients</h3>
-                        <p>Access authorized patient information and medical history.</p>
-                    </div>
-                </a>
+        {% endif %}
 
-                <a href="{% url 'prescription_list' %}" class="card-link">
-                    <div class="card">
-                        <h3>Digital Prescriptions</h3>
-                        <p>View your prescriptions and create new prescriptions.</p>
-                    </div>
-                </a>
+    </section>
 
-                <a href="{% url 'doctor_profile' %}" class="card-link">
-                    <div class="card">
-                        <h3>My Profile</h3>
-                        <p>View and update your professional information and credentials.</p>
-                    </div>
-                </a>
+    <a href="{% url 'logout' %}" class="logout">Sign Out</a>
 
-            {% endif %}
-
-        </section>
-
-        <a href="{% url 'logout' %}" class="logout">Sign Out</a>
-
-    </main>
+</main>
 
 </body>
 </html>

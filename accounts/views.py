@@ -128,12 +128,75 @@ def dashboard_view(request):
         logout(request)
         return redirect('login')
 
+    context = {
+        'role': role,
+    }
+
+    # ADMIN DASHBOARD STATISTICS
+    if role == 'ADMIN':
+
+        context.update({
+            # Patients
+            'total_patients': Patient.objects.filter(
+                is_active=True
+            ).count(),
+
+            # Doctors
+            'total_doctors': UserProfile.objects.filter(
+                role='DOCTOR',
+                status='APPROVED'
+            ).count(),
+
+            # Staff
+            'total_staff': UserProfile.objects.filter(
+                role='STAFF',
+                status='APPROVED'
+            ).count(),
+
+            # Prescriptions
+            'total_prescriptions': Prescription.objects.filter(
+                is_deleted=False
+            ).count(),
+
+            'finalized_prescriptions': Prescription.objects.filter(
+                status='FINALIZED',
+                is_deleted=False
+            ).count(),
+
+            'draft_prescriptions': Prescription.objects.filter(
+                status='DRAFT',
+                is_deleted=False
+            ).count(),
+
+            # Pending Approvals
+            'pending_doctors': UserProfile.objects.filter(
+                role='DOCTOR',
+                status='PENDING'
+            ).count(),
+
+            'pending_staff': UserProfile.objects.filter(
+                role='STAFF',
+                status='PENDING'
+            ).count(),
+
+            # Recent Records
+            'recent_patients': Patient.objects.filter(
+                is_active=True
+            ).order_by('-created_at')[:5],
+
+            'recent_prescriptions': Prescription.objects.filter(
+                is_deleted=False
+            ).select_related(
+                'patient',
+                'doctor'
+            ).order_by('-created_at')[:5],
+        })
+
     return render(
         request,
         'accounts/dashboard.html',
-        {'role': role}
+        context
     )
-
 
 # =========================
 # LOGOUT
